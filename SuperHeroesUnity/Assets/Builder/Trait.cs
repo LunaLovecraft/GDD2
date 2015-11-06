@@ -8,6 +8,16 @@ public delegate void Trait(Character myChar);
 public static partial class Traits
 {
     /// <summary>
+    /// Gets an ability based on a string.  Can be used for loading purposes.
+    /// </summary>
+    /// <param name="abilityName">The ability being looked for</param>
+    /// <returns>An Ability delegate</returns>
+    public static Trait GetTrait(string traitName)
+    {
+        return (Trait)Trait.CreateDelegate(typeof(Trait), typeof(Traits).GetMethod(traitName));
+    }
+
+    /// <summary>
     /// Example Trait Implementation.  All traits must be part of the static partial class Traits.
     /// </summary>
 

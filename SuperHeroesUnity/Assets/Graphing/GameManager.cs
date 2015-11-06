@@ -58,7 +58,10 @@ public class GameManager : MonoBehaviour {
             Debug.Log("No Path Possible");
         }
         Debug.Log(possibleSpots.Count);
-       
+
+        // Demonstrating how this works.
+        Abilities.GetAbility("Example")(myChar, map);
+
 	}
 	
 	// Update is called once per frame
