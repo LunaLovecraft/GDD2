@@ -31,11 +31,11 @@ public class GameManager : MonoBehaviour {
         myChar = new Character(map, "Example");
         myChar2 = new Character(map, "Example");
 
-        if (myChar.Create(0, 0) == CHAR_INIT.CHAR_AT_LOC_ERROR)
+        if (myChar.Create(0, 0, 0) == CHAR_INIT.CHAR_AT_LOC_ERROR)
         {
 
         }
-        if (myChar2.Create(1, 8) == CHAR_INIT.CHAR_AT_LOC_ERROR)
+        if (myChar2.Create(1, 8, 1) == CHAR_INIT.CHAR_AT_LOC_ERROR)
         {
 
         }
@@ -43,24 +43,8 @@ public class GameManager : MonoBehaviour {
         possibleSpots = myChar.MyLocation.FindPossibleMoves(0, 4, null, null);
         path = myChar.MyLocation.FindPathTo(map.map[5, 6], map, MovementType.Ground);
 
-        
-
-        if (path != null)
-        {
-            Debug.Log(path.Count);
-            for (int i = 0; i < path.Count; ++i)
-            {
-                Debug.Log(path[i].ToString());
-            }
-        }
-        else
-        {
-            Debug.Log("No Path Possible");
-        }
-        Debug.Log(possibleSpots.Count);
-
-        // Demonstrating how this works.
-        Abilities.GetAbility("Example")(myChar, map);
+        Debug.Log(myChar.Name);
+        Debug.Log(myChar.Health);
 
 	}
 	

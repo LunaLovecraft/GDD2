@@ -14,7 +14,7 @@ public static partial class Traits
     /// <returns>An Ability delegate</returns>
     public static Trait GetTrait(string traitName)
     {
-        return (Trait)Trait.CreateDelegate(typeof(Trait), typeof(Traits).GetMethod(traitName));
+        return (Trait)Trait.CreateDelegate(typeof(Trait), typeof(Traits).GetMethod("Init_" + traitName));
     }
 
     /// <summary>

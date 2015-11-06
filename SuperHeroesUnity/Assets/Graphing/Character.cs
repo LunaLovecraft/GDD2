@@ -50,6 +50,8 @@ public partial class Character{
     private MovementType movement;
     private Dictionary<Condition, int> myConditions;
 
+    private int faction;
+
     public int Y { get { return y; } }
     public int X { get { return x; } }
     public Node MyLocation { get { return myLocation; } }
@@ -57,6 +59,7 @@ public partial class Character{
     public int Health { get { return health; } }
     public int Speed { get { return speed; } }
     public MovementType Movement { get { return movement; } }
+    public int Faction { get { return faction; } }
 
     /// <summary>
     /// Any unit on the map
@@ -76,6 +79,7 @@ public partial class Character{
         this.speed = 0;
         this.movement = MovementType.Ground;
         this.myConditions = null;
+        this.faction = 0;
     }
 
     /// <summary>
@@ -84,7 +88,7 @@ public partial class Character{
     /// <param name="y">Y position to spawn the character</param>
     /// <param name="x">X position to spawn the character</param>
     /// <returns>Any error codes</returns>
-    public CHAR_INIT Create(int y, int x)
+    public CHAR_INIT Create(int y, int x, int faction)
     {
         if (map.map[y, x].myCharacter != null)
         {
@@ -108,6 +112,7 @@ public partial class Character{
         this.movement = myData.movement;
         this.myConditions = new Dictionary<Condition, int>();
         this.myAbilities = myData.abilities;
+        this.faction = faction;
 
         // Add all the traits to the character's event handlers
         List<Trait> myTraits = myData.traits;
