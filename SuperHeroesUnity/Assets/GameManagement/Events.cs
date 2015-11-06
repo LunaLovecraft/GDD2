@@ -12,18 +12,19 @@ public class CharEventArgs : EventArgs
     {
         this.myChar = myChar;
     }
-
 }
 
 public class ConditionEventArgs : EventArgs
 {
     public Character myChar;
     public Condition type;
+    public int turns;
 
-    public ConditionEventArgs(Character myChar, ref Condition type, ref int turns)
+    public ConditionEventArgs(Character myChar, Condition type, int turns)
     {
         this.myChar = myChar;
         this.type = type;
+        this.turns = turns;
     }
 }
 
@@ -33,7 +34,7 @@ public class DamageEventArgs : EventArgs{
     public DamageType type;
     public int damage;
 
-    public DamageEventArgs(Character myChar, ref DamageType type, ref int damage)
+    public DamageEventArgs(Character myChar, DamageType type, int damage)
     {
         this.myChar = myChar;
         this.type = type;
@@ -47,7 +48,7 @@ public class HealEventArgs : EventArgs
     public Character myChar;
     public int heal;
 
-    public HealEventArgs(Character myChar, ref int heal)
+    public HealEventArgs(Character myChar, int heal)
     {
         this.myChar = myChar;
         this.heal = heal;

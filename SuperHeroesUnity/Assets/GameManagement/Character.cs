@@ -141,9 +141,9 @@ public partial class Character{
     /// <param name="type">The type of the damage</param>
     public void DamageCharacter(int damage, DamageType type = DamageType.Physical){
         // Call the damaged event.
-        E_Damaged(new DamageEventArgs(this, ref type, ref damage));
-
-        this.health -= damage;
+        DamageEventArgs e = new DamageEventArgs(this, type, damage);
+        E_Damaged(e);
+        this.health -= e.damage;
 
         // If health is below zero, call the dead event.
         if (health <= 0)
@@ -162,10 +162,11 @@ public partial class Character{
     /// <param name="heal">The amount to heal</param>
     public void HealCharacter(int heal)
     {
+        HealEventArgs e = (new HealEventArgs(this, heal));
         // Call the healed event.
-        E_Healed(new HealEventArgs(this, ref heal));
+        E_Healed(e);
 
-        this.health += heal;
+        this.health += e.heal;
 
         // If health is below zero, call the dead event.
         if (health <= 0)
@@ -211,20 +212,21 @@ public partial class Character{
     /// <param name="turns">The number of turns the effect should stay active.</param>
     public void AddCondition(Condition newCondition, int turns)
     {
-        E_GainCondition(new ConditionEventArgs(this, ref newCondition, ref turns));
+        ConditionEventArgs e = new ConditionEventArgs(this, newCondition, turns);
+        E_GainCondition(e);
 
-        if (myConditions.ContainsKey(newCondition))
+        if (myConditions.ContainsKey(e.type))
         {
-            if(myConditions[newCondition] < turns){
-                myConditions[newCondition] = turns;
+            if(myConditions[newCondition] < e.turns){
+                myConditions[newCondition] = e.turns;
             }
             return;
         }
 
-        myConditions.Add(newCondition, turns);
+        myConditions.Add(e.type, turns);
 
         // Any effects that occur when a condition begins (perhaps instant heal);
-        switch (newCondition)
+        switch (e.type)
         {
 
         }
@@ -240,12 +242,13 @@ public partial class Character{
         {
             // For simplicity sake I'm passing in a meaningless turns.  If there's a reason to use it later all the better
             int turns = 0;
-            E_LoseCondition(new ConditionEventArgs(this, ref newCondition, ref turns));
+            ConditionEventArgs e = new ConditionEventArgs(this, newCondition, turns);
+            E_LoseCondition(e);
 
-            myConditions.Remove(newCondition);
+            myConditions.Remove(e.type);
             
             // Any effects that occur when a condition ends (say disabling speed or something) should happen here
-            switch(newCondition){
+            switch(e.type){
 
             }
         }
