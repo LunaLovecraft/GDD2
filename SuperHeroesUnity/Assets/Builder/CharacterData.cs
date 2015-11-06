@@ -28,7 +28,7 @@ public struct CharacterData
 }
 
 
-public static partial class CharacterList{
+public static partial class CharacterInfoList{
     
 
     // This dictionary is used to gather all of the characters by name so we can spawn them easily.

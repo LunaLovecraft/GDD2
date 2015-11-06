@@ -49,6 +49,7 @@ public partial class Character{
     private int speed;
     private MovementType movement;
     private Dictionary<Condition, int> myConditions;
+    private List<Character> characterList;
 
     private int faction;
 
@@ -60,6 +61,8 @@ public partial class Character{
     public int Speed { get { return speed; } }
     public MovementType Movement { get { return movement; } }
     public int Faction { get { return faction; } }
+
+    
 
     /// <summary>
     /// Any unit on the map
@@ -80,6 +83,8 @@ public partial class Character{
         this.movement = MovementType.Ground;
         this.myConditions = null;
         this.faction = 0;
+        this.characterList = null;
+        
     }
 
     /// <summary>
@@ -88,7 +93,7 @@ public partial class Character{
     /// <param name="y">Y position to spawn the character</param>
     /// <param name="x">X position to spawn the character</param>
     /// <returns>Any error codes</returns>
-    public CHAR_INIT Create(int y, int x, int faction)
+    public CHAR_INIT Create(int y, int x, int faction, List<Character> characterList)
     {
         if (map.map[y, x].myCharacter != null)
         {
@@ -101,11 +106,11 @@ public partial class Character{
         map.map[y, x].myCharacter = this;
 
         // Load the abilities and such
-        if (!CharacterList.characters.ContainsKey(name))
+        if (!CharacterInfoList.characters.ContainsKey(name))
         {
             return CHAR_INIT.CHAR_DOESNT_EXIST;
         }
-        CharacterData myData = CharacterList.characters[name];
+        CharacterData myData = CharacterInfoList.characters[name];
         this.health = myData.health;
         this.maxHealth = myData.health;
         this.speed = myData.speed;
@@ -113,6 +118,8 @@ public partial class Character{
         this.myConditions = new Dictionary<Condition, int>();
         this.myAbilities = myData.abilities;
         this.faction = faction;
+        this.characterList = characterList;
+        this.characterList.Add(this);
 
         // Add all the traits to the character's event handlers
         List<Trait> myTraits = myData.traits;
