@@ -4,7 +4,7 @@ using System.Collections;
 public delegate void Ability(Character myChar, GridHandler map);
 
 /// <summary>
-/// Example Ability implementation.
+/// Inside are defined any helper functions Abilities uses
 /// </summary>
 public static partial class Abilities{
 
@@ -17,13 +17,4 @@ public static partial class Abilities{
     {
         return (Ability)Ability.CreateDelegate(typeof(Ability), typeof(Abilities).GetMethod(abilityName));
     }
-
-    /// <summary>
-    /// Example Ability Implementation.  All ablities must be part of the static partial class Abilities.
-    /// </summary>
-    public static void Example(Character myChar, GridHandler map)
-    {
-        Debug.Log("This is an example Ability.");
-    }
-
 }
