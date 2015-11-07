@@ -66,6 +66,7 @@ public class GameManager : MonoBehaviour {
         Debug.Log(myChar.Name);
         Debug.Log(myChar.Health);
 
+        gameObject.AddComponent<UIManager>();
 	}
 	
 	// Update is called once per frame
