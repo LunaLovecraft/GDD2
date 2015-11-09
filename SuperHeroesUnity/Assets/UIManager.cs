@@ -11,7 +11,7 @@ enum UIState
 
 public class UIManager : MonoBehaviour {
     
-    GridHandler map;
+    GameManager gm;
     UIState currentState;
     GameObject CurrentCanvas;
     Stack History = new Stack();
@@ -23,13 +23,13 @@ public class UIManager : MonoBehaviour {
         currentState = UIState.Default;
         UIUpdate();
         Characters = new List<GameObject>();
+        gm = gameObject.GetComponent<GameManager>();
         
 	}
 
-    public void InitMap(GridHandler givenMap)
+    public void InitMap()
     {
-        
-        map = givenMap;
+        GridHandler map = gm.map;
         Tiles = new GameObject[map.Height,map.Width];
 
 
@@ -64,22 +64,17 @@ public class UIManager : MonoBehaviour {
                     if (map.map[y, x].myCharacter.Faction == 0)
                     {
                         character.GetComponent<SpriteRenderer>().color = Color.green;
-                        Moves = map.map[y, x].FindPossibleMoves(0, 4, null, null);
                     } else character.GetComponent<SpriteRenderer>().color = Color.red;
 
-                    Characters.Add(character);
+         
                 }
             }
-        }
-
-        foreach (Node node in Moves)
-        {
-            Tiles[node.Y, node.X].GetComponent<SpriteRenderer>().color = Color.green;
         }
     }
 
     public void TileClicked(int x, int y)
     {
+        GridHandler map = gm.map;
         Debug.Log("The Tile at " + x + ", " + y + " is " + map.map[y, x].height);
     }
 
@@ -136,7 +131,15 @@ public class UIManager : MonoBehaviour {
         Debug.Log("Moving? " + currentState);
         CurrentCanvas = Instantiate(Resources.Load("UI/MovementCanvas")) as GameObject;
 
+
+        gm = gameObject.GetComponent<GameManager>();
         
+        Moves = gm.map.map[0, 0].FindPossibleMoves(0, 4, null, null);
+
+        foreach (Node node in Moves)
+        {
+            Tiles[node.Y, node.X].GetComponent<SpriteRenderer>().color = Color.green;
+        }
         
     }
 

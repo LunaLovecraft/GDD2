@@ -1,0 +1,88 @@
+Mono path[0] = 'D:/Coding Projects/TBStrat/SuperHeroesUnity/testBuild_Data/Managed'
+Mono path[1] = 'D:/Coding Projects/TBStrat/SuperHeroesUnity/testBuild_Data/Mono'
+Mono config path = 'D:/Coding Projects/TBStrat/SuperHeroesUnity/testBuild_Data/Mono/etc'
+PlayerConnection initialized from D:/Coding Projects/TBStrat/SuperHeroesUnity/testBuild_Data (debug = 0)
+PlayerConnection initialized network socket : 0.0.0.0 55387
+Multi-casting "[IP] 129.21.149.205 [Port] 55387 [Flags] 3 [Guid] 435407113 [EditorId] 837717986 [Version] 1048832 [Id] WindowsPlayer(Sean-PC) [Debug] 1" to [225.0.0.222:54997]...
+Waiting for connection from host on [129.21.149.205:55387]...
+PlayerConnection accepted from [129.21.149.205] handle:0x274
+Using monoOptions --debugger-agent=transport=dt_socket,embedding=1,defer=y,address=0.0.0.0:56113
+PlayerConnection already initialized - listening to [129.21.149.205:55387]
+Initialize engine version: 5.2.1f1 (44735ea161b3)
+GfxDevice: creating device client; threaded=1
+Direct3D:
+    Version:  Direct3D 11.0 [level 11.0]
+    Renderer: NVIDIA GeForce GTX 970 (ID=0x13c2)
+    Vendor:   NVIDIA
+    VRAM:     3072 MB
+Begin MonoManager ReloadAssembly
+Platform assembly: D:\Coding Projects\TBStrat\SuperHeroesUnity\testBuild_Data\Managed\UnityEngine.dll (this message is harmless)
+Loading D:\Coding Projects\TBStrat\SuperHeroesUnity\testBuild_Data\Managed\UnityEngine.dll into Unity Child Domain
+Platform assembly: D:\Coding Projects\TBStrat\SuperHeroesUnity\testBuild_Data\Managed\Assembly-CSharp.dll (this message is harmless)
+Loading D:\Coding Projects\TBStrat\SuperHeroesUnity\testBuild_Data\Managed\Assembly-CSharp.dll into Unity Child Domain
+Platform assembly: D:\Coding Projects\TBStrat\SuperHeroesUnity\testBuild_Data\Managed\UnityEngine.UI.dll (this message is harmless)
+Loading D:\Coding Projects\TBStrat\SuperHeroesUnity\testBuild_Data\Managed\UnityEngine.UI.dll into Unity Child Domain
+Platform assembly: D:\Coding Projects\TBStrat\SuperHeroesUnity\testBuild_Data\Managed\UnityEngine.Networking.dll (this message is harmless)
+Loading D:\Coding Projects\TBStrat\SuperHeroesUnity\testBuild_Data\Managed\UnityEngine.Networking.dll into Unity Child Domain
+Platform assembly: D:\Coding Projects\TBStrat\SuperHeroesUnity\testBuild_Data\Managed\System.Core.dll (this message is harmless)
+- Completed reload, in  0.152 seconds
+desktop: 1920x1080 60Hz; virtual: 3360x1080 at 0,0
+<RI> Initializing input.
+<RI> Input initialized.
+<RI> Initialized touch support.
+Platform assembly: D:\Coding Projects\TBStrat\SuperHeroesUnity\testBuild_Data\Managed\System.dll (this message is harmless)
+This is an example trait
+UnityEngine.Debug:Internal_Log(Int32, String, Object)
+UnityEngine.Debug:Log(Object)
+Traits:Event_Example(Object, EventArgs) (at D:\Coding Projects\TBStrat\SuperHeroesUnity\Assets\Builder\Traits\TraitTemplate.cs:20)
+Character:E_Spawn(CharEventArgs) (at D:\Coding Projects\TBStrat\SuperHeroesUnity\Assets\GameManagement\Events.cs:80)
+Character:Create(Int32, Int32, Int32, List`1) (at D:\Coding Projects\TBStrat\SuperHeroesUnity\Assets\GameManagement\Character.cs:132)
+GameManager:Start() (at D:\Coding Projects\TBStrat\SuperHeroesUnity\Assets\GameManagement\GameManager.cs:47)
+ 
+(Filename: D:/Coding Projects/TBStrat/SuperHeroesUnity/Assets/Builder/Traits/TraitTemplate.cs Line: 20)
+
+This is an example trait
+UnityEngine.Debug:Internal_Log(Int32, String, Object)
+UnityEngine.Debug:Log(Object)
+Traits:Event_Example(Object, EventArgs) (at D:\Coding Projects\TBStrat\SuperHeroesUnity\Assets\Builder\Traits\TraitTemplate.cs:20)
+Character:E_Spawn(CharEventArgs) (at D:\Coding Projects\TBStrat\SuperHeroesUnity\Assets\GameManagement\Events.cs:80)
+Character:Create(Int32, Int32, Int32, List`1) (at D:\Coding Projects\TBStrat\SuperHeroesUnity\Assets\GameManagement\Character.cs:132)
+GameManager:Start() (at D:\Coding Projects\TBStrat\SuperHeroesUnity\Assets\GameManagement\GameManager.cs:51)
+ 
+(Filename: D:/Coding Projects/TBStrat/SuperHeroesUnity/Assets/Builder/Traits/TraitTemplate.cs Line: 20)
+
+Example
+UnityEngine.Debug:Internal_Log(Int32, String, Object)
+UnityEngine.Debug:Log(Object)
+GameManager:Start() (at D:\Coding Projects\TBStrat\SuperHeroesUnity\Assets\GameManagement\GameManager.cs:66)
+ 
+(Filename: D:/Coding Projects/TBStrat/SuperHeroesUnity/Assets/GameManagement/GameManager.cs Line: 66)
+
+100
+UnityEngine.Debug:Internal_Log(Int32, String, Object)
+UnityEngine.Debug:Log(Object)
+GameManager:Start() (at D:\Coding Projects\TBStrat\SuperHeroesUnity\Assets\GameManagement\GameManager.cs:67)
+ 
+(Filename: D:/Coding Projects/TBStrat/SuperHeroesUnity/Assets/GameManagement/GameManager.cs Line: 67)
+
+Default? Default
+UnityEngine.Debug:Internal_Log(Int32, String, Object)
+UnityEngine.Debug:Log(Object)
+UIManager:drawDefaultUI() (at D:\Coding Projects\TBStrat\SuperHeroesUnity\Assets\UIManager.cs:130)
+UIManager:UIUpdate() (at D:\Coding Projects\TBStrat\SuperHeroesUnity\Assets\UIManager.cs:116)
+UIManager:Start() (at D:\Coding Projects\TBStrat\SuperHeroesUnity\Assets\UIManager.cs:24)
+ 
+(Filename: D:/Coding Projects/TBStrat/SuperHeroesUnity/Assets/UIManager.cs Line: 130)
+
+ArgumentException: The thing you want to instantiate is null.
+  at UnityEngine.Object.CheckNullArgument (System.Object arg, System.String message) [0x00006] in C:\buildslave\unity\build\Runtime\Export\UnityEngineObject.cs:102 
+  at UnityEngine.Object.Instantiate (UnityEngine.Object original) [0x00000] in C:\buildslave\unity\build\Runtime\Export\UnityEngineObject.cs:87 
+  at UIManager.drawDefaultUI () [0x0001a] in D:\Coding Projects\TBStrat\SuperHeroesUnity\Assets\UIManager.cs:131 
+  at UIManager.UIUpdate () [0x00030] in D:\Coding Projects\TBStrat\SuperHeroesUnity\Assets\UIManager.cs:116 
+  at UIManager.Start () [0x00007] in D:\Coding Projects\TBStrat\SuperHeroesUnity\Assets\UIManager.cs:24 
+ 
+(Filename: C:/buildslave/unity/build/Runtime/Export/UnityEngineObject.cs Line: 102)
+
+Setting up 1 worker threads for Enlighten.
+  Thread -> id: 94d60 -> priority: 1 
+Waiting for finish
