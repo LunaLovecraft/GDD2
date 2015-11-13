@@ -20,6 +20,7 @@ public class TileScript : MonoBehaviour {
 
     void OnMouseDown()
     {
+        Debug.Log(this.x + ", " + this.y);
         uiMan.TileClicked(this.x, this.y);
     }
 }

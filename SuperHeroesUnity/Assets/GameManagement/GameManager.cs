@@ -65,8 +65,10 @@ public class GameManager : MonoBehaviour {
 
         Debug.Log(myChar.Name);
         Debug.Log(myChar.Health);
+        
 
         gameObject.GetComponent<UIManager>().InitMap();
+        Debug.Log("Map in start: " + map);
 	}
 	
 	// Update is called once per frame

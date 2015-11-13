@@ -16,20 +16,25 @@ public class UIManager : MonoBehaviour {
     GameObject CurrentCanvas;
     Stack History = new Stack();
     GameObject[,] Tiles;
+    GridHandler map;
     List<GameObject> Characters;
-    public List<Node> Moves;
+    List<Node> Moves;
 	// Use this for initialization
 	void Start () {
-        currentState = UIState.Default;
-        UIUpdate();
-        Characters = new List<GameObject>();
-        gm = gameObject.GetComponent<GameManager>();
-        
+
 	}
 
     public void InitMap()
     {
-        GridHandler map = gm.map;
+
+        currentState = UIState.Default;
+        UIUpdate();
+        Characters = new List<GameObject>();
+        gm = gameObject.GetComponent<GameManager>();
+        Debug.Log(gm);
+        
+        map = gm.map;
+        
         Tiles = new GameObject[map.Height,map.Width];
 
 
@@ -70,18 +75,27 @@ public class UIManager : MonoBehaviour {
                 }
             }
         }
+
+        Debug.Log("Init" + map);
+        Debug.Log(gm.map);
+
     }
 
     public void TileClicked(int x, int y)
     {
-        GridHandler map = gm.map;
         Debug.Log("The Tile at " + x + ", " + y + " is " + map.map[y, x].height);
+    }
+
+    public void HandleClick(string buttonState)
+    {
+        GameObject.FindGameObjectWithTag("GameManager").GetComponent<UIManager>().ButtonClicked(buttonState);
+
     }
 
    public void ButtonClicked(string buttonState)
     {
         History.Push(currentState);
-        clearUI();        
+        //clearUI();        
         switch (buttonState)
         {
             case "Movement":
@@ -117,13 +131,13 @@ public class UIManager : MonoBehaviour {
     {
         Debug.Log("Clearing UI");
 
-        Destroy(CurrentCanvas.gameObject);
+        //Destroy(CurrentCanvas.gameObject);
     }
 
     void drawDefaultUI()
     {
         Debug.Log("Default? " + currentState);
-        CurrentCanvas = Instantiate(Resources.Load("UI/DefaultCanvas")) as GameObject;
+        CurrentCanvas.
     }
 
     void drawMovementUI()
@@ -131,10 +145,12 @@ public class UIManager : MonoBehaviour {
         Debug.Log("Moving? " + currentState);
         CurrentCanvas = Instantiate(Resources.Load("UI/MovementCanvas")) as GameObject;
 
-
         gm = gameObject.GetComponent<GameManager>();
-        
-        Moves = gm.map.map[0, 0].FindPossibleMoves(0, 4, null, null);
+        map = gm.map;
+
+        Debug.Log("gm? " + gm);
+        map.PrintTest();
+        Moves = map.map[0, 0].FindPossibleMoves(0, 4, null, null);
 
         foreach (Node node in Moves)
         {
@@ -155,5 +171,6 @@ public class UIManager : MonoBehaviour {
         {
             clearUI();
         }
+        Debug.Log(map);
 	}
 }
