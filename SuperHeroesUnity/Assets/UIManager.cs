@@ -104,6 +104,9 @@ public class UIManager : MonoBehaviour {
             case "Attack":
                 currentState = UIState.Attacking;
                 break;
+            case "Back":
+                currentState = (UIState) History.Pop();
+                break;
             default:
                 currentState = UIState.Default;
                 break;
@@ -137,19 +140,42 @@ public class UIManager : MonoBehaviour {
     void drawDefaultUI()
     {
         Debug.Log("Default? " + currentState);
-        CurrentCanvas.
+        List<GameObject> unwanted = new List<GameObject>();
+        unwanted.AddRange(GameObject.FindGameObjectsWithTag("AttackUI"));
+        unwanted.AddRange(GameObject.FindGameObjectsWithTag("BackUI"));
+        unwanted.AddRange(GameObject.FindGameObjectsWithTag("MoveUI"));
+        foreach(GameObject obj in unwanted)
+        {
+            obj.SetActive(false);
+        }
+        GameObject[] defaultUI = GameObject.FindGameObjectsWithTag("HomeUI");
+        foreach(GameObject obj in defaultUI)
+        {
+            obj.SetActive(true);
+        }
     }
 
     void drawMovementUI()
     {
         Debug.Log("Moving? " + currentState);
-        CurrentCanvas = Instantiate(Resources.Load("UI/MovementCanvas")) as GameObject;
-
-        gm = gameObject.GetComponent<GameManager>();
-        map = gm.map;
-
-        Debug.Log("gm? " + gm);
-        map.PrintTest();
+        List<GameObject> unwanted = new List<GameObject>();
+        unwanted.AddRange(GameObject.FindGameObjectsWithTag("AttackUI"));
+        unwanted.AddRange(GameObject.FindGameObjectsWithTag("HomeUI"));
+        foreach (GameObject obj in unwanted)
+        {
+            Debug.Log("deactivating");
+            obj.SetActive(false);
+        }
+        List<GameObject> moveUI = new List<GameObject>();
+        moveUI.AddRange(GameObject.FindGameObjectsWithTag("MoveUI"));
+        moveUI.AddRange(GameObject.FindGameObjectsWithTag("BackUI"));
+        Debug.Log(GameObject.FindGameObjectsWithTag("BackUI").Length);
+        Debug.Log(moveUI.Count);
+        foreach (GameObject obj in moveUI)
+        {
+            Debug.Log("activating");
+            obj.SetActive(true);
+        }
         Moves = map.map[0, 0].FindPossibleMoves(0, 4, null, null);
 
         foreach (Node node in Moves)
@@ -162,7 +188,20 @@ public class UIManager : MonoBehaviour {
     void drawAttackingUI()
     {
         Debug.Log("Attacking? " + currentState);
-        CurrentCanvas = Instantiate(Resources.Load("UI/AttackingCanvas")) as GameObject;
+        List<GameObject> unwanted = new List<GameObject>();
+        unwanted.AddRange(GameObject.FindGameObjectsWithTag("MoveUI"));
+        unwanted.AddRange(GameObject.FindGameObjectsWithTag("HomeUI"));
+        foreach (GameObject obj in unwanted)
+        {
+            obj.SetActive(false);
+        }
+        List<GameObject> attackUI = new List<GameObject>();
+        attackUI.AddRange(GameObject.FindGameObjectsWithTag("AttackUI"));
+        attackUI.AddRange(GameObject.FindGameObjectsWithTag("BackUI"));
+        foreach (GameObject obj in attackUI)
+        {
+            obj.SetActive(true);
+        }
     }
 
 	// Update is called once per frame
@@ -171,6 +210,5 @@ public class UIManager : MonoBehaviour {
         {
             clearUI();
         }
-        Debug.Log(map);
 	}
 }
