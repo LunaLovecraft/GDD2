@@ -19,19 +19,31 @@ public class UIManager : MonoBehaviour {
     GridHandler map;
     List<GameObject> Characters;
     List<Node> Moves;
+    List<GameObject> BackUI;
+    List<GameObject> AttackUI;
+    List<GameObject> HomeUI;
+    List<GameObject> MoveUI;
 	// Use this for initialization
 	void Start () {
-
 	}
 
     public void InitMap()
     {
+        BackUI = new List<GameObject>();
+        AttackUI = new List<GameObject>();
+        HomeUI = new List<GameObject>();
+        MoveUI = new List<GameObject>();
 
-        currentState = UIState.Default;
-        UIUpdate();
+        Moves = new List<Node>();
+
+        BackUI.AddRange(GameObject.FindGameObjectsWithTag("BackUI"));
+        AttackUI.AddRange(GameObject.FindGameObjectsWithTag("AttackUI"));
+        HomeUI.AddRange(GameObject.FindGameObjectsWithTag("HomeUI"));
+        MoveUI.AddRange(GameObject.FindGameObjectsWithTag("MoveUI"));
+
+        
         Characters = new List<GameObject>();
         gm = gameObject.GetComponent<GameManager>();
-        Debug.Log(gm);
         
         map = gm.map;
         
@@ -76,9 +88,8 @@ public class UIManager : MonoBehaviour {
             }
         }
 
-        Debug.Log("Init" + map);
-        Debug.Log(gm.map);
-
+        currentState = UIState.Default;
+        UIUpdate();
     }
 
     public void TileClicked(int x, int y)
@@ -94,18 +105,21 @@ public class UIManager : MonoBehaviour {
 
    public void ButtonClicked(string buttonState)
     {
-        History.Push(currentState);
+        
         //clearUI();        
         switch (buttonState)
         {
             case "Movement":
+                History.Push(currentState);
                 currentState = UIState.Movement;
                 break;
             case "Attack":
+                History.Push(currentState);
                 currentState = UIState.Attacking;
                 break;
             case "Back":
                 currentState = (UIState) History.Pop();
+                Debug.Log(currentState);
                 break;
             default:
                 currentState = UIState.Default;
@@ -141,17 +155,20 @@ public class UIManager : MonoBehaviour {
     {
         Debug.Log("Default? " + currentState);
         List<GameObject> unwanted = new List<GameObject>();
-        unwanted.AddRange(GameObject.FindGameObjectsWithTag("AttackUI"));
-        unwanted.AddRange(GameObject.FindGameObjectsWithTag("BackUI"));
-        unwanted.AddRange(GameObject.FindGameObjectsWithTag("MoveUI"));
+        unwanted.AddRange(AttackUI);
+        unwanted.AddRange(BackUI);
+        unwanted.AddRange(MoveUI);
         foreach(GameObject obj in unwanted)
         {
             obj.SetActive(false);
         }
-        GameObject[] defaultUI = GameObject.FindGameObjectsWithTag("HomeUI");
-        foreach(GameObject obj in defaultUI)
+        foreach(GameObject obj in HomeUI)
         {
             obj.SetActive(true);
+        }
+        foreach (Node node in Moves)
+        {
+            Tiles[node.Y, node.X].GetComponent<SpriteRenderer>().color = Tiles[node.Y, node.X].GetComponent<TileScript>().baseColor;
         }
     }
 
@@ -159,18 +176,16 @@ public class UIManager : MonoBehaviour {
     {
         Debug.Log("Moving? " + currentState);
         List<GameObject> unwanted = new List<GameObject>();
-        unwanted.AddRange(GameObject.FindGameObjectsWithTag("AttackUI"));
-        unwanted.AddRange(GameObject.FindGameObjectsWithTag("HomeUI"));
+        unwanted.AddRange(AttackUI);
+        unwanted.AddRange(HomeUI);
         foreach (GameObject obj in unwanted)
         {
             Debug.Log("deactivating");
             obj.SetActive(false);
         }
         List<GameObject> moveUI = new List<GameObject>();
-        moveUI.AddRange(GameObject.FindGameObjectsWithTag("MoveUI"));
-        moveUI.AddRange(GameObject.FindGameObjectsWithTag("BackUI"));
-        Debug.Log(GameObject.FindGameObjectsWithTag("BackUI").Length);
-        Debug.Log(moveUI.Count);
+        moveUI.AddRange(MoveUI);
+        moveUI.AddRange(BackUI);
         foreach (GameObject obj in moveUI)
         {
             Debug.Log("activating");
@@ -189,15 +204,15 @@ public class UIManager : MonoBehaviour {
     {
         Debug.Log("Attacking? " + currentState);
         List<GameObject> unwanted = new List<GameObject>();
-        unwanted.AddRange(GameObject.FindGameObjectsWithTag("MoveUI"));
-        unwanted.AddRange(GameObject.FindGameObjectsWithTag("HomeUI"));
+        unwanted.AddRange(MoveUI);
+        unwanted.AddRange(HomeUI);
         foreach (GameObject obj in unwanted)
         {
             obj.SetActive(false);
         }
         List<GameObject> attackUI = new List<GameObject>();
-        attackUI.AddRange(GameObject.FindGameObjectsWithTag("AttackUI"));
-        attackUI.AddRange(GameObject.FindGameObjectsWithTag("BackUI"));
+        attackUI.AddRange(AttackUI);
+        attackUI.AddRange(BackUI);
         foreach (GameObject obj in attackUI)
         {
             obj.SetActive(true);
