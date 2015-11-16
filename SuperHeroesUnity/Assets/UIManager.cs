@@ -113,7 +113,7 @@ public class UIManager : MonoBehaviour {
                     }
                 }
                 selectedCharacter.Move(y, x);
-                Moves = map.map[selectedCharacter.Y, selectedCharacter.X].FindPossibleMoves(0, 4, null, null);
+                Moves = map.map[selectedCharacter.Y, selectedCharacter.X].FindPossibleMoves((int)selectedCharacter.Movement, selectedCharacter.Speed);
                 break;
             }
         }
