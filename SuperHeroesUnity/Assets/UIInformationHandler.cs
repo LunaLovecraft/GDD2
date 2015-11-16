@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 
 public static class UIInformationHandler {
-    List<UIInformation> InformationStack = new List<UIInformation>();
+    public static Stack<UIInformation> InformationStack = new Stack<UIInformation>();
 }
 
 public class UIInformation
