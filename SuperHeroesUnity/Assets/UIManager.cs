@@ -1,19 +1,21 @@
 ﻿using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
+using UnityEngine.UI;
 
 enum UIState
 {
     Default,
     Movement,
-    Attacking
+    Attacking,
+    Planning
 }
 
 public class UIManager : MonoBehaviour {
     
     GameManager gm;
     UIState currentState;
-    GameObject CurrentCanvas;
+    public GameObject CurrentCanvas;
     Stack History = new Stack();
     GameObject[,] Tiles;
     GridHandler map;
@@ -23,6 +25,7 @@ public class UIManager : MonoBehaviour {
     List<GameObject> AttackUI;
     List<GameObject> HomeUI;
     List<GameObject> MoveUI;
+    public Button abilityButton;
     Character selectedCharacter;
 	// Use this for initialization
 	void Start () {
@@ -107,12 +110,13 @@ public class UIManager : MonoBehaviour {
                 {
                     if(tile.GetComponent<CharacterSpriteScript>().X == selectedCharacter.X && tile.GetComponent<CharacterSpriteScript>().Y == selectedCharacter.Y)
                     {
-                        Debug.Log("Matching Character found");
+                        Debug.Log("Character must move");
                         tile.GetComponent<CharacterSpriteScript>().moveTo(x, y);
+                        selectedCharacter.Move(y, x);
                         break;
                     }
                 }
-                selectedCharacter.Move(y, x);
+                
                 Moves = map.map[selectedCharacter.Y, selectedCharacter.X].FindPossibleMoves((int)selectedCharacter.Movement, selectedCharacter.Speed);
                 break;
             }
@@ -161,6 +165,9 @@ public class UIManager : MonoBehaviour {
             case UIState.Attacking:
                 drawAttackingUI();
                 break;
+            case UIState.Planning:
+                drawSelectingUI();
+                break;
             default:
                 drawDefaultUI();
                 break;
@@ -192,6 +199,22 @@ public class UIManager : MonoBehaviour {
         foreach (Node node in Moves)
         {
             Tiles[node.Y, node.X].GetComponent<SpriteRenderer>().color = Tiles[node.Y, node.X].GetComponent<TileScript>().baseColor;
+        }
+    }
+
+    void drawSelectingUI()
+    {
+        Debug.Log(UIInformationHandler.InformationStack.Count);
+        if(UIInformationHandler.InformationStack.Count > 0)
+        {
+            UIInformation tempInfo = UIInformationHandler.InformationStack.Peek();
+            foreach(List<Node> list in tempInfo.options)
+            {
+                foreach(Node tile in list)
+                {
+                    Tiles[tile.Y, tile.X].GetComponent<SpriteRenderer>().color = Color.yellow;
+                }
+            }
         }
     }
 
@@ -240,13 +263,37 @@ public class UIManager : MonoBehaviour {
         {
             obj.SetActive(true);
         }
+
+        List<GameObject> AbilityButtons = new List<GameObject>();
+        foreach(Ability ability in selectedCharacter.MyAbilities)
+        {
+            Debug.Log(CurrentCanvas.transform);
+            Button button = Instantiate(abilityButton);
+            button.transform.SetParent(CurrentCanvas.transform, false);
+            button.GetComponentInChildren<Text>().text = ability.Method.Name;
+            button.transform.localPosition = new Vector3(0, 0, 0);
+            button.GetComponent<RectTransform>().anchorMax = new Vector2(0.0f, 0.5f);
+            button.GetComponent<RectTransform>().anchorMin = new Vector2(0.0f, 0.5f);
+            button.GetComponent<RectTransform>().anchoredPosition = new Vector2(125, 0);
+            button.GetComponent<AbilityButtonScript>().gm = gameObject;
+            button.GetComponent<AbilityButtonScript>().map = gm.map;
+            button.GetComponent<AbilityButtonScript>().myChar = selectedCharacter;
+            button.GetComponent<AbilityButtonScript>().script = ability;
+            button.GetComponent<Button>().onClick.AddListener(() => { abilityClicked(ability, selectedCharacter, map); });
+
+        }
+    }
+
+    void abilityClicked(Ability script, Character myChar, GridHandler map)
+    {
+        Debug.Log("Click");
+        script(myChar, map);
+        currentState = UIState.Planning;
+        UIUpdate();
     }
 
 	// Update is called once per frame
 	void Update () {
-        if(Input.GetKey(KeyCode.Space) == true)
-        {
-            clearUI();
-        }
+        
 	}
 }
