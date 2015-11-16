@@ -1,7 +1,9 @@
 ﻿using UnityEngine;
 using System.Collections;
+using System.Collections.Generic;
 
 public delegate void Ability(Character myChar, GridHandler map);
+public delegate void AbilityAddition(Character myChar, GridHandler map, int affectedFaction, List<Node> affectedNodes);
 
 /// <summary>
 /// Inside are defined any helper functions Abilities uses

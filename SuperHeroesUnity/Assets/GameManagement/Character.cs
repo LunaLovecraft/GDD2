@@ -50,12 +50,14 @@ public partial class Character{
     private MovementType movement;
     private Dictionary<Condition, int> myConditions;
     private List<Character> characterList;
+    public bool canAct;
 
     private int faction;
 
     public int Y { get { return y; } }
     public int X { get { return x; } }
     public Node MyLocation { get { return myLocation; } }
+    public List<Ability> MyAbilities { get { return myAbilities; } }
     public string Name { get { return name; } }
     public int Health { get { return health; } }
     public int Speed { get { return speed; } }
@@ -84,6 +86,7 @@ public partial class Character{
         this.myConditions = null;
         this.faction = 0;
         this.characterList = null;
+        this.canAct = false;
         
     }
 
