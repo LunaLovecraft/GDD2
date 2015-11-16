@@ -190,7 +190,7 @@ public partial class Character{
     /// <returns>Returns false if you cannot move to that spot.</returns>
     public bool Move(int y, int x)
     {
-        if (map.map[y, x].myCharacter != null || map.map[y, x].height != TerrainHeight.Empty || (movement == MovementType.Ground && map.map[y, x].height == TerrainHeight.Wall))
+        if (map.map[y, x].myCharacter != null || map.map[y, x].height == TerrainHeight.Empty || (movement == MovementType.Ground && map.map[y, x].height == TerrainHeight.Wall))
         {
             return false;
         }
@@ -201,7 +201,7 @@ public partial class Character{
         this.x = x;
 
         myLocation = map.map[y, x];
-
+        Debug.Log("Moved to " + x + ", " + y);
         // Call Move Event
         E_Moved(new CharEventArgs(this));
 

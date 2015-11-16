@@ -110,12 +110,13 @@ public class UIManager : MonoBehaviour {
                 {
                     if(tile.GetComponent<CharacterSpriteScript>().X == selectedCharacter.X && tile.GetComponent<CharacterSpriteScript>().Y == selectedCharacter.Y)
                     {
-                        Debug.Log("Matching Character found");
+                        Debug.Log("Character must move");
                         tile.GetComponent<CharacterSpriteScript>().moveTo(x, y);
+                        selectedCharacter.Move(y, x);
                         break;
                     }
                 }
-                selectedCharacter.Move(y, x);
+                
                 Moves = map.map[selectedCharacter.Y, selectedCharacter.X].FindPossibleMoves((int)selectedCharacter.Movement, selectedCharacter.Speed);
                 break;
             }
@@ -204,7 +205,7 @@ public class UIManager : MonoBehaviour {
     void drawSelectingUI()
     {
         Debug.Log(UIInformationHandler.InformationStack.Count);
-        while(UIInformationHandler.InformationStack.Count > 0)
+        if(UIInformationHandler.InformationStack.Count > 0)
         {
             UIInformation tempInfo = UIInformationHandler.InformationStack.Peek();
             foreach(List<Node> list in tempInfo.options)
