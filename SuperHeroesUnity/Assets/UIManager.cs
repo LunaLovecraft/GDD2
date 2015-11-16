@@ -17,12 +17,13 @@ public class UIManager : MonoBehaviour {
     Stack History = new Stack();
     GameObject[,] Tiles;
     GridHandler map;
-    List<GameObject> Characters;
+    List<GameObject> CharacterUI;
     List<Node> Moves;
     List<GameObject> BackUI;
     List<GameObject> AttackUI;
     List<GameObject> HomeUI;
     List<GameObject> MoveUI;
+    Character selectedCharacter;
 	// Use this for initialization
 	void Start () {
 	}
@@ -42,11 +43,10 @@ public class UIManager : MonoBehaviour {
         MoveUI.AddRange(GameObject.FindGameObjectsWithTag("MoveUI"));
 
         
-        Characters = new List<GameObject>();
+        CharacterUI = new List<GameObject>();
         gm = gameObject.GetComponent<GameManager>();
         
         map = gm.map;
-        
         Tiles = new GameObject[map.Height,map.Width];
 
 
@@ -77,12 +77,15 @@ public class UIManager : MonoBehaviour {
                 if (map.map[y, x].myCharacter != null)
                 {
                     GameObject character = Instantiate(Resources.Load("Character")) as GameObject;
-                    character.transform.position = new Vector3(x - 5, y - 4.5f, -0.5f);
+                    character.GetComponent<CharacterSpriteScript>().moveTo(x, y);
                     if (map.map[y, x].myCharacter.Faction == 0)
                     {
+                        selectedCharacter = map.map[y, x].myCharacter;
+                        character.GetComponent<CharacterSpriteScript>().X = x;
+                        character.GetComponent<CharacterSpriteScript>().Y = y;
                         character.GetComponent<SpriteRenderer>().color = Color.green;
                     } else character.GetComponent<SpriteRenderer>().color = Color.red;
-
+                    CharacterUI.Add(character);
          
                 }
             }
@@ -95,6 +98,26 @@ public class UIManager : MonoBehaviour {
     public void TileClicked(int x, int y)
     {
         Debug.Log("The Tile at " + x + ", " + y + " is " + map.map[y, x].height);
+        foreach (Node node in Moves)
+        {
+            if (node.X == x && node.Y == y)
+            {
+                Debug.Log("Match found at " + x + ", " + y );
+                foreach(GameObject tile in CharacterUI)
+                {
+                    if(tile.GetComponent<CharacterSpriteScript>().X == selectedCharacter.X && tile.GetComponent<CharacterSpriteScript>().Y == selectedCharacter.Y)
+                    {
+                        Debug.Log("Matching Character found");
+                        tile.GetComponent<CharacterSpriteScript>().moveTo(x, y);
+                        break;
+                    }
+                }
+                selectedCharacter.Move(y, x);
+                Moves = map.map[selectedCharacter.Y, selectedCharacter.X].FindPossibleMoves((int)selectedCharacter.Movement, selectedCharacter.Speed);
+                break;
+            }
+        }
+        
     }
 
     public void HandleClick(string buttonState)
@@ -191,7 +214,7 @@ public class UIManager : MonoBehaviour {
             Debug.Log("activating");
             obj.SetActive(true);
         }
-        Moves = map.map[0, 0].FindPossibleMoves(0, 4, null, null);
+        Moves = map.map[selectedCharacter.Y, selectedCharacter.X].FindPossibleMoves(0, 4, null, null);
 
         foreach (Node node in Moves)
         {
