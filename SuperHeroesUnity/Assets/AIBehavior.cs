@@ -2,12 +2,11 @@
 using System.Collections;
 using System.Collections.Generic;
 
-struct MovementAction
+public struct MovementAction
 {
-    public MovementAction(Node node, Ability ability, int score)
+    public MovementAction(Node node, int score)
     {
         this.node = node;
-        this.ability = ability;
 
         this.score = score;
     }
@@ -16,9 +15,19 @@ struct MovementAction
     public int score;
 }
 
-struct AbilityAction
+public struct AbilityAction
 {
+    public AbilityAction(Ability ability, int score)
+    {
+        this.ability = ability;
 
+        this.score = score;
+    }
+
+    public Ability ability;
+
+
+    public int score;
 }
 
 public class AIBehavior : MonoBehaviour
@@ -29,11 +38,16 @@ public class AIBehavior : MonoBehaviour
     List<Node> moveLocations;
     List<Ability> abilities;
 
-    List<Character> allies;
-    List<Character> enemies;
+    List<Character> allies = new List<Character>();
+    List<Character> enemies = new List<Character>();
 
     List<MovementAction> movementActions = new List<MovementAction>();
     MovementAction chosenMovement;
+
+    List<AbilityAction> abilityActions = new List<AbilityAction>();
+    AbilityAction chosenAbility;
+
+    float healthiness;
 
     // Use this for initialization
     void Start()
@@ -42,30 +56,18 @@ public class AIBehavior : MonoBehaviour
         character = GetComponent<Character>();
     }
 
-    void MakeAction()
+    public void ChooseActions()
     {
-        // Find locations to move to.
-        moveLocations = character.MyLocation.FindPossibleMoves((int)character.Movement, character.Speed);
-
-        // Find possible abilities to use.
-        abilities = character.Abilities;
-
-        ScoreMovementActions();
-
-        chosenMovement = ChooseMovementAction();
-
-        ScoreAbilityActions();
-    }
-
-    void ScoreMovementActions()
-    {
-        // Percentage of current health to max health used to determine how healthy a character is.
-        float healthiness = character.Health / character.MaxHealth;
+        // Clears previous lists.
+        abilityActions.Clear();
+        movementActions.Clear();
+        allies.Clear();
+        enemies.Clear();
 
         // Finds allies and enemies.
-        for(int i = 0; i < gameManager.Factions.Count; i++)
+        for (int i = 0; i < gameManager.Factions.Count; i++)
         {
-            if(i == character.Faction)
+            if (i == character.Faction)
             {
                 allies = gameManager.Factions[i].Units;
             }
@@ -75,24 +77,49 @@ public class AIBehavior : MonoBehaviour
             }
         }
 
+        // Percentage of current health to max health used to determine how healthy a character is.
+        healthiness = character.Health / character.MaxHealth;
 
+        // Find locations to move to.
+        moveLocations = character.MyLocation.FindPossibleMoves((int)character.Movement, character.Speed);
+        // Find possible abilities to use.
+        abilities = character.Abilities;
+
+        // Creates a list of movement actions with scores.
+        ScoreMovementActions();
+
+        // Chooses a movement action from that list
+        chosenMovement = ChooseMovementAction();
+
+        // Creates a list of ability actions based off the chosen movement action
+        ScoreAbilityActions();
+
+        // Chooses an ability action from that list.
+        chosenAbility = ChooseAbilityAction();
+    }
+
+    #region Choose Action Helper Methods
+    void ScoreMovementActions()
+    {
         // Goes through each node and gives a score based on specific factors about the location
         foreach (Node node in moveLocations)
         {
             int score = 0;
             int rangeToEnemey = FindRangeToClosestEnemy();
             int rangeToFriend = FindRangeToClosestAlly();
+           // int enemiesInRange = FindEnemiesInRangeOfAttacks();
 
             if (healthiness > 0.5f) // When healthy
             {
-                score += rangeToEnemey;
-                
+                score -= rangeToEnemey;
             }
             else // When unhealthy
             {
-                score -= rangeToEnemey;
+                score += rangeToEnemey;
                 score += rangeToFriend;
             }
+
+            movementActions.Add(new MovementAction(node, score));
         }
     }
 
@@ -135,20 +162,43 @@ public class AIBehavior : MonoBehaviour
              *    + Add health given
              *    + Positive status effects given
              */
+
+            abilityActions.Add(new AbilityAction(ability, score));
         }
+    }
+
+    AbilityAction ChooseAbilityAction()
+    {
+        // Sort actions from highest scored to lowest scored.
+        for (int i = 0; i < abilityActions.Count; i++)
+        {
+            int maxIndex = i;
+            for (int j = i + 1; j < abilityActions.Count; j++)
+            {
+                if (abilityActions[maxIndex].score < abilityActions[j].score)
+                {
+                    maxIndex = j;
+                }
+            }
+
+            AbilityAction temp = abilityActions[i];
+            abilityActions[i] = abilityActions[maxIndex];
+            abilityActions[maxIndex] = temp;
+        }
+
+        // Picks move positions from highest
+        return abilityActions[0];
     }
 
     int FindRangeToClosestEnemy()
     {
         int maxRange = int.MaxValue;
 
-        foreach(Character enemy in enemies)
+        foreach (Character enemy in enemies)
         {
-            int rangeX =  Mathf.Abs( enemy.MyLocation.X - character.MyLocation.X);
-            int rangeY = Mathf.Abs(enemy.MyLocation.Y - character.MyLocation.Y);
-            int range = Mathf.Max(rangeX, rangeY);
+            int range = enemy.MyLocation.FindPathTo(character.MyLocation, gameManager.map, enemy.Movement).Count;
 
-            if(range < maxRange)
+            if (range < maxRange)
             {
                 maxRange = range;
             }
@@ -164,9 +214,7 @@ public class AIBehavior : MonoBehaviour
 
         foreach (Character ally in allies)
         {
-            int rangeX = Mathf.Abs(ally.MyLocation.X - character.MyLocation.X);
-            int rangeY = Mathf.Abs(ally.MyLocation.Y - character.MyLocation.Y);
-            int range = Mathf.Max(rangeX, rangeY);
+            int range = ally.MyLocation.FindPathTo(character.MyLocation, gameManager.map, ally.Movement).Count;
 
             if (range < maxRange)
             {
@@ -175,5 +223,39 @@ public class AIBehavior : MonoBehaviour
         }
 
         return maxRange;
+    }
+
+    /* int FindEnemiesInRangeOfAttacks()
+     {
+         int score = 0;
+
+         foreach(Ability ability in abilities)
+         {
+             if ((bool)Abilities.GetAbilityInfo(ability.Method.Name, AbilityInfo.Offensive))
+             {
+                 int abilityRange = (int)Abilities.GetAbilityInfo(ability.Method.Name, AbilityInfo.Range);
+
+                 foreach(Character enemy in enemies)
+                 {
+                     if(enemy.MyLocation.FindPathTo(character.MyLocation, gameManager.map).Count  < abilityRange)
+                     {
+                         score += 1;
+                     }
+                 }
+             }
+         }
+
+         return score;
+     }*/
+    #endregion
+
+    MovementAction GetChosenMovementAction()
+    {
+        return chosenMovement;
+    }
+
+    AbilityAction GetChosenAbilityAction()
+    {
+        return chosenAbility;
     }
 }
