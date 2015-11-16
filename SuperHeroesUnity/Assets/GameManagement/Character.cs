@@ -64,7 +64,8 @@ public partial class Character{
     public MovementType Movement { get { return movement; } }
     public int Faction { get { return faction; } }
 
-    
+    public List<Ability> Abilities { get { return myAbilities; } }
+    public int MaxHealth { get { return maxHealth; } }
 
     /// <summary>
     /// Any unit on the map

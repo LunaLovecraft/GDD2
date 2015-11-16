@@ -142,4 +142,6 @@ public class GameManager : MonoBehaviour {
         }
         currentState = PlayerState.TurnStart;
     }
+
+    public List<Faction> Factions { get { return factions; } }
 }
