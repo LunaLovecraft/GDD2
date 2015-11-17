@@ -27,6 +27,7 @@ public class UIManager : MonoBehaviour {
     List<GameObject> MoveUI;
     public Button abilityButton;
     Character selectedCharacter;
+    public GameObject HoverTile;
 	// Use this for initialization
 	void Start () {
 	}
@@ -37,7 +38,6 @@ public class UIManager : MonoBehaviour {
         AttackUI = new List<GameObject>();
         HomeUI = new List<GameObject>();
         MoveUI = new List<GameObject>();
-
         Moves = new List<Node>();
 
         BackUI.AddRange(GameObject.FindGameObjectsWithTag("BackUI"));
@@ -66,12 +66,15 @@ public class UIManager : MonoBehaviour {
                 {
                     case TerrainHeight.Empty:
                         tempTile.GetComponent<SpriteRenderer>().color = Color.black;
+                        tempTile.GetComponent<TileScript>().baseColor = Color.black;
                         break;
                     case TerrainHeight.Ground:
                         tempTile.GetComponent<SpriteRenderer>().color = Color.white;
+                        tempTile.GetComponent<TileScript>().baseColor = Color.white;
                         break;
                     case TerrainHeight.Wall:
                         tempTile.GetComponent<SpriteRenderer>().color = Color.gray;
+                        tempTile.GetComponent<TileScript>().baseColor = Color.gray;
                         break;
                 }
 
@@ -98,6 +101,50 @@ public class UIManager : MonoBehaviour {
         UIUpdate();
     }
 
+    public void TileHovered(int x, int y)
+    {
+        if (currentState == UIState.Movement)
+        {
+            GameObject tile = Instantiate(HoverTile);
+            tile.GetComponent<GlowManager>().moveTo(x, y);
+            Tiles[y, x].GetComponent<TileScript>().hoverTile = tile;
+        }
+        else if (currentState == UIState.Planning)
+        {
+            foreach(List<Node> list in UIInformationHandler.InformationStack.Peek().options)
+            {
+                if(list.Contains(map.map[y, x]))
+                {
+                    foreach(Node tile in list)
+                    {
+                        GameObject hoverTile = Instantiate(HoverTile);
+                        hoverTile.GetComponent<GlowManager>().moveTo(tile.X, tile.Y);
+                        Tiles[y, x].GetComponent<TileScript>().hoverTile = hoverTile;
+                    }
+                }
+            }
+        }
+    }
+
+    public void TileExited(int x, int y)
+    {  
+        if(currentState == UIState.Planning)
+        {
+            foreach(List<Node> list in UIInformationHandler.InformationStack.Peek().options)
+                if (list.Contains(map.map[y, x]))
+                {
+                    foreach (Node tile in list)
+                    {
+                        if(Tiles[tile.Y, tile.X].GetComponent<TileScript>().hoverTile != null)
+                        {
+                            Destroy(Tiles[tile.Y, tile.X].GetComponent<TileScript>().hoverTile);
+                            Tiles[tile.Y, tile.X].GetComponent<TileScript>().hoverTile = null;
+                        }
+                    }
+                }
+        }
+    }
+
     public void TileClicked(int x, int y)
     {
         Debug.Log("The Tile at " + x + ", " + y + " is " + map.map[y, x].height);
@@ -118,6 +165,7 @@ public class UIManager : MonoBehaviour {
                 }
                 
                 Moves = map.map[selectedCharacter.Y, selectedCharacter.X].FindPossibleMoves((int)selectedCharacter.Movement, selectedCharacter.Speed);
+                UIUpdate();
                 break;
             }
         }
@@ -237,7 +285,12 @@ public class UIManager : MonoBehaviour {
             Debug.Log("activating");
             obj.SetActive(true);
         }
-        Moves = map.map[selectedCharacter.Y, selectedCharacter.X].FindPossibleMoves(0, 4, null, null);
+        Moves = map.map[selectedCharacter.Y, selectedCharacter.X].FindPossibleMoves((int)selectedCharacter.Movement, selectedCharacter.Speed ,null, null);
+
+        foreach (Node node in map.map)
+        {
+            Tiles[node.Y, node.X].GetComponent<SpriteRenderer>().color = Tiles[node.Y, node.X].GetComponent<TileScript>().baseColor;
+        }
 
         foreach (Node node in Moves)
         {
