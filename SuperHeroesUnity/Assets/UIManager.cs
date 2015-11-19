@@ -147,26 +147,28 @@ public class UIManager : MonoBehaviour {
 
     public void TileClicked(int x, int y)
     {
-        Debug.Log("The Tile at " + x + ", " + y + " is " + map.map[y, x].height);
-        foreach (Node node in Moves)
+        if (currentState == UIState.Movement)
         {
-            if (node.X == x && node.Y == y)
+            foreach (Node node in Moves)
             {
-                Debug.Log("Match found at " + x + ", " + y );
-                foreach(GameObject tile in CharacterUI)
+                if (node.X == x && node.Y == y)
                 {
-                    if(tile.GetComponent<CharacterSpriteScript>().X == selectedCharacter.X && tile.GetComponent<CharacterSpriteScript>().Y == selectedCharacter.Y)
+                    Debug.Log("Match found at " + x + ", " + y);
+                    foreach (GameObject tile in CharacterUI)
                     {
-                        Debug.Log("Character must move");
-                        tile.GetComponent<CharacterSpriteScript>().moveTo(x, y);
-                        selectedCharacter.Move(y, x);
-                        break;
+                        if (tile.GetComponent<CharacterSpriteScript>().X == selectedCharacter.X && tile.GetComponent<CharacterSpriteScript>().Y == selectedCharacter.Y)
+                        {
+                            Debug.Log("Character must move");
+                            tile.GetComponent<CharacterSpriteScript>().moveTo(x, y);
+                            selectedCharacter.Move(y, x);
+                            break;
+                        }
                     }
+
+                    Moves = map.map[selectedCharacter.Y, selectedCharacter.X].FindPossibleMoves((int)selectedCharacter.Movement, selectedCharacter.Speed);
+                    UIUpdate();
+                    break;
                 }
-                
-                Moves = map.map[selectedCharacter.Y, selectedCharacter.X].FindPossibleMoves((int)selectedCharacter.Movement, selectedCharacter.Speed);
-                UIUpdate();
-                break;
             }
         }
         
@@ -193,6 +195,14 @@ public class UIManager : MonoBehaviour {
                 currentState = UIState.Attacking;
                 break;
             case "Back":
+                if(currentState == UIState.Attacking)
+                {
+                    GameObject[] toDelete = GameObject.FindGameObjectsWithTag("Abilities");
+                    foreach(GameObject btn in toDelete)
+                    {
+                        Destroy(btn);
+                    }
+                }
                 currentState = (UIState) History.Pop();
                 Debug.Log(currentState);
                 break;
@@ -316,7 +326,7 @@ public class UIManager : MonoBehaviour {
         {
             obj.SetActive(true);
         }
-
+        
         List<GameObject> AbilityButtons = new List<GameObject>();
         foreach(Ability ability in selectedCharacter.MyAbilities)
         {
