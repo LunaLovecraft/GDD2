@@ -21,12 +21,14 @@ public class UIManager : MonoBehaviour {
     GridHandler map;
     List<GameObject> CharacterUI;
     List<Node> Moves;
+    int SelectedAbilityOptions = -1;
     List<GameObject> BackUI;
     List<GameObject> AttackUI;
     List<GameObject> HomeUI;
     List<GameObject> MoveUI;
     public Button abilityButton;
     Character selectedCharacter;
+    public GameObject HoverTile;
 	// Use this for initialization
 	void Start () {
 	}
@@ -37,7 +39,6 @@ public class UIManager : MonoBehaviour {
         AttackUI = new List<GameObject>();
         HomeUI = new List<GameObject>();
         MoveUI = new List<GameObject>();
-
         Moves = new List<Node>();
 
         BackUI.AddRange(GameObject.FindGameObjectsWithTag("BackUI"));
@@ -66,12 +67,15 @@ public class UIManager : MonoBehaviour {
                 {
                     case TerrainHeight.Empty:
                         tempTile.GetComponent<SpriteRenderer>().color = Color.black;
+                        tempTile.GetComponent<TileScript>().baseColor = Color.black;
                         break;
                     case TerrainHeight.Ground:
                         tempTile.GetComponent<SpriteRenderer>().color = Color.white;
+                        tempTile.GetComponent<TileScript>().baseColor = Color.white;
                         break;
                     case TerrainHeight.Wall:
                         tempTile.GetComponent<SpriteRenderer>().color = Color.gray;
+                        tempTile.GetComponent<TileScript>().baseColor = Color.gray;
                         break;
                 }
 
@@ -83,11 +87,11 @@ public class UIManager : MonoBehaviour {
                     character.GetComponent<CharacterSpriteScript>().moveTo(x, y);
                     if (map.map[y, x].myCharacter.Faction == 0)
                     {
-                        selectedCharacter = map.map[y, x].myCharacter;
                         character.GetComponent<CharacterSpriteScript>().X = x;
                         character.GetComponent<CharacterSpriteScript>().Y = y;
                         character.GetComponent<SpriteRenderer>().color = Color.green;
                     } else character.GetComponent<SpriteRenderer>().color = Color.red;
+                    selectedCharacter = map.map[y, x].myCharacter;
                     CharacterUI.Add(character);
          
                 }
@@ -98,27 +102,94 @@ public class UIManager : MonoBehaviour {
         UIUpdate();
     }
 
-    public void TileClicked(int x, int y)
+    public void SelectCharacter(Character newSelection)
     {
-        Debug.Log("The Tile at " + x + ", " + y + " is " + map.map[y, x].height);
-        foreach (Node node in Moves)
+        selectedCharacter = newSelection;
+    }
+
+    public void TileHovered(int x, int y)
+    {
+        if (currentState == UIState.Movement)
         {
-            if (node.X == x && node.Y == y)
+            GameObject tile = Instantiate(HoverTile);
+            tile.GetComponent<GlowManager>().moveTo(x, y);
+            Tiles[y, x].GetComponent<TileScript>().hoverTile = tile;
+        }
+        else if (currentState == UIState.Planning)
+        {
+            int index = 0;
+            foreach(List<Node> list in UIInformationHandler.InformationStack.Peek().options)
             {
-                Debug.Log("Match found at " + x + ", " + y );
-                foreach(GameObject tile in CharacterUI)
+                if(list.Contains(map.map[y, x]))
                 {
-                    if(tile.GetComponent<CharacterSpriteScript>().X == selectedCharacter.X && tile.GetComponent<CharacterSpriteScript>().Y == selectedCharacter.Y)
+                    SelectedAbilityOptions = index;
+                    foreach(Node tile in list)
                     {
-                        Debug.Log("Character must move");
-                        tile.GetComponent<CharacterSpriteScript>().moveTo(x, y);
-                        selectedCharacter.Move(y, x);
-                        break;
+                        GameObject hoverTile = Instantiate(HoverTile);
+                        hoverTile.GetComponent<GlowManager>().moveTo(tile.X, tile.Y);
+                        Tiles[tile.Y, tile.X].GetComponent<TileScript>().hoverTile = hoverTile;
                     }
                 }
-                
-                Moves = map.map[selectedCharacter.Y, selectedCharacter.X].FindPossibleMoves((int)selectedCharacter.Movement, selectedCharacter.Speed);
-                break;
+                index += 1;
+            }
+        }
+    }
+
+    public void TileExited(int x, int y)
+    {  
+        if(currentState == UIState.Planning)
+        {
+            foreach(List<Node> list in UIInformationHandler.InformationStack.Peek().options)
+                if (list.Contains(map.map[y, x]))
+                {
+                    SelectedAbilityOptions = -1;
+                    Debug.Log("found list containing tile at" + x + ", " + y);
+                    foreach (Node tile in list)
+                    {
+                        if(Tiles[tile.Y, tile.X].GetComponent<TileScript>().hoverTile != null)
+                        {
+                            Tiles[tile.Y, tile.X].GetComponent<TileScript>().DestroyHover();
+                        }
+                    }
+                }
+        }
+    }
+
+    public void TileClicked(int x, int y)
+    {
+        if (currentState == UIState.Movement)
+        {
+            foreach (Node node in Moves)
+            {
+                if (node.X == x && node.Y == y)
+                {
+                    Debug.Log("Match found at " + x + ", " + y);
+                    foreach (GameObject tile in CharacterUI)
+                    {
+                        if (tile.GetComponent<CharacterSpriteScript>().X == selectedCharacter.X && tile.GetComponent<CharacterSpriteScript>().Y == selectedCharacter.Y)
+                        {
+                            Debug.Log("Character must move");
+                            tile.GetComponent<CharacterSpriteScript>().moveTo(x, y);
+                            selectedCharacter.Move(y, x);
+                            break;
+                        }
+                    }
+
+                    Moves = map.map[selectedCharacter.Y, selectedCharacter.X].FindPossibleMoves((int)selectedCharacter.Movement, selectedCharacter.Speed);
+                    UIUpdate();
+                    break;
+                }
+            }
+        }
+        else if(currentState == UIState.Planning && SelectedAbilityOptions != -1)
+        {
+            UIInformationHandler.InformationStack.Peek().SelectOption(SelectedAbilityOptions);
+        }
+        else if(currentState == UIState.Default)
+        {
+            if(map.map[y, x].myCharacter != selectedCharacter)
+            {
+                SelectCharacter(map.map[y, x].myCharacter);
             }
         }
         
@@ -130,7 +201,7 @@ public class UIManager : MonoBehaviour {
 
     }
 
-   public void ButtonClicked(string buttonState)
+    public void ButtonClicked(string buttonState)
     {
         
         //clearUI();        
@@ -145,6 +216,30 @@ public class UIManager : MonoBehaviour {
                 currentState = UIState.Attacking;
                 break;
             case "Back":
+                if (currentState == UIState.Attacking || currentState == UIState.Planning)
+                {
+                    List<GameObject> toDelete = new List<GameObject>();
+                    toDelete.AddRange(GameObject.FindGameObjectsWithTag("Abilities"));
+                    toDelete.AddRange(GameObject.FindGameObjectsWithTag("Hovers"));
+                    foreach(GameObject btn in toDelete)
+                    {
+                        Destroy(btn);
+                    }
+                    foreach(List<Node> list in UIInformationHandler.InformationStack.Peek().options)
+                    {
+                        foreach(Node tile in list)
+                        {
+                            Tiles[tile.Y, tile.X].GetComponent<SpriteRenderer>().color = Tiles[tile.Y, tile.X].GetComponent<TileScript>().baseColor;
+                        }
+                    }
+                } else if(currentState == UIState.Movement)
+                {
+                    foreach (Node node in Moves)
+                    {
+                        Tiles[node.Y, node.X].GetComponent<SpriteRenderer>().color = Tiles[node.Y, node.X].GetComponent<TileScript>().baseColor;
+                    }
+                }
+
                 currentState = (UIState) History.Pop();
                 Debug.Log(currentState);
                 break;
@@ -196,10 +291,7 @@ public class UIManager : MonoBehaviour {
         {
             obj.SetActive(true);
         }
-        foreach (Node node in Moves)
-        {
-            Tiles[node.Y, node.X].GetComponent<SpriteRenderer>().color = Tiles[node.Y, node.X].GetComponent<TileScript>().baseColor;
-        }
+        
     }
 
     void drawSelectingUI()
@@ -237,7 +329,12 @@ public class UIManager : MonoBehaviour {
             Debug.Log("activating");
             obj.SetActive(true);
         }
-        Moves = map.map[selectedCharacter.Y, selectedCharacter.X].FindPossibleMoves(0, 4, null, null);
+        Moves = map.map[selectedCharacter.Y, selectedCharacter.X].FindPossibleMoves((int)selectedCharacter.Movement, selectedCharacter.Speed ,null, null);
+
+        foreach (Node node in map.map)
+        {
+            Tiles[node.Y, node.X].GetComponent<SpriteRenderer>().color = Tiles[node.Y, node.X].GetComponent<TileScript>().baseColor;
+        }
 
         foreach (Node node in Moves)
         {
@@ -263,8 +360,9 @@ public class UIManager : MonoBehaviour {
         {
             obj.SetActive(true);
         }
-
+        
         List<GameObject> AbilityButtons = new List<GameObject>();
+        float yOffset = 0.0f;
         foreach(Ability ability in selectedCharacter.MyAbilities)
         {
             Debug.Log(CurrentCanvas.transform);
@@ -274,11 +372,12 @@ public class UIManager : MonoBehaviour {
             button.transform.localPosition = new Vector3(0, 0, 0);
             button.GetComponent<RectTransform>().anchorMax = new Vector2(0.0f, 0.5f);
             button.GetComponent<RectTransform>().anchorMin = new Vector2(0.0f, 0.5f);
-            button.GetComponent<RectTransform>().anchoredPosition = new Vector2(125, 0);
+            button.GetComponent<RectTransform>().anchoredPosition = new Vector2(125, yOffset);
             button.GetComponent<AbilityButtonScript>().gm = gameObject;
             button.GetComponent<AbilityButtonScript>().map = gm.map;
             button.GetComponent<AbilityButtonScript>().myChar = selectedCharacter;
             button.GetComponent<AbilityButtonScript>().script = ability;
+            yOffset -= 60;
             button.GetComponent<Button>().onClick.AddListener(() => { abilityClicked(ability, selectedCharacter, map); });
 
         }
@@ -288,9 +387,12 @@ public class UIManager : MonoBehaviour {
     {
         Debug.Log("Click");
         script(myChar, map);
+        History.Push(currentState);
         currentState = UIState.Planning;
         UIUpdate();
     }
+
+
 
 	// Update is called once per frame
 	void Update () {
