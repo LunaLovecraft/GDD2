@@ -86,11 +86,11 @@ public class UIManager : MonoBehaviour {
                     character.GetComponent<CharacterSpriteScript>().moveTo(x, y);
                     if (map.map[y, x].myCharacter.Faction == 0)
                     {
-                        selectedCharacter = map.map[y, x].myCharacter;
                         character.GetComponent<CharacterSpriteScript>().X = x;
                         character.GetComponent<CharacterSpriteScript>().Y = y;
                         character.GetComponent<SpriteRenderer>().color = Color.green;
                     } else character.GetComponent<SpriteRenderer>().color = Color.red;
+                    selectedCharacter = map.map[y, x].myCharacter;
                     CharacterUI.Add(character);
          
                 }
@@ -99,6 +99,11 @@ public class UIManager : MonoBehaviour {
 
         currentState = UIState.Default;
         UIUpdate();
+    }
+
+    public void SelectCharacter(Character newSelection)
+    {
+        selectedCharacter = newSelection;
     }
 
     public void TileHovered(int x, int y)
@@ -171,6 +176,17 @@ public class UIManager : MonoBehaviour {
                 }
             }
         }
+        else if(currentState == UIState.Planning)
+        {
+
+        }
+        else if(currentState == UIState.Default)
+        {
+            if(map.map[y, x].myCharacter != selectedCharacter)
+            {
+                SelectCharacter(map.map[y, x].myCharacter);
+            }
+        }
         
     }
 
@@ -180,7 +196,7 @@ public class UIManager : MonoBehaviour {
 
     }
 
-   public void ButtonClicked(string buttonState)
+    public void ButtonClicked(string buttonState)
     {
         
         //clearUI();        
@@ -195,7 +211,7 @@ public class UIManager : MonoBehaviour {
                 currentState = UIState.Attacking;
                 break;
             case "Back":
-                if(currentState == UIState.Attacking)
+                if (currentState == UIState.Attacking || currentState == UIState.Planning)
                 {
                     GameObject[] toDelete = GameObject.FindGameObjectsWithTag("Abilities");
                     foreach(GameObject btn in toDelete)
@@ -354,6 +370,8 @@ public class UIManager : MonoBehaviour {
         currentState = UIState.Planning;
         UIUpdate();
     }
+
+
 
 	// Update is called once per frame
 	void Update () {
