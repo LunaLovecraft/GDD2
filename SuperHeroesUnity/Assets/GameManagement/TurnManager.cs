@@ -1,43 +1,74 @@
 ﻿using UnityEngine;
 using System.Collections;
+using System.Collections.Generic;
 
-enum TurnState
+public enum TurnState
 {
     TurnStart,
     Actions,
     TurnEnd
 }
 
-public class TurnManager : MonoBehaviour
+public static class TurnManager
 {
-    TurnOrderManager turnOrderManager;
-    Character character;
-    TurnState turnState;
+    public static TurnState currentState = TurnState.TurnStart;
+    public static List<Faction> factions;
+    public static int currentFactionTurn = 0;
+    private static int playerIndex = 0;
 
-    UIManager uIManager;
-
-    void Start()
+    public static void Initialize(List<Faction> inputFactions)
     {
-        turnOrderManager = GetComponent<TurnOrderManager>();
-        turnState = TurnState.TurnStart;
-        uIManager = GetComponent<UIManager>();
+        factions = inputFactions;
     }
 
-    public void StartNewTurn(Character character)
+    public static void Update()
     {
-        this.character = character;
+
+        switch (currentState)
+        {
+            case TurnState.Actions:
+                TurnAction();
+                break;
+            case TurnState.TurnStart:
+                TurnStart();
+                break;
+            case TurnState.TurnEnd:
+                TurnEnd();
+                break;
+        }
+
     }
 
-    private void TurnStart()
+    private static void TurnStart()
     {
+        for (int i = 0; i < factions[currentFactionTurn].Units.Count; ++i)
+        {
+            factions[currentFactionTurn].Units[i].BeginTurn();
+        }
+        currentState = TurnState.Actions;
+        TurnAction(); // We actually call turn action here because there's no reason to waste an update.
     }
 
-    private void TurnAction()
+    private static void TurnAction()
     {
+        if (playerIndex == currentFactionTurn) // If it's the player's turn
+        {
+
+        }
+        else // AI stuff
+        {
+
+
+        }
+
     }
 
-    public void TurnEnd()
+    private static void TurnEnd()
     {
-        turnOrderManager.EndCurrentTurn();
+        for (int i = 0; i < factions[currentFactionTurn].Units.Count; ++i)
+        {
+            factions[currentFactionTurn].Units[i].EndTurn();
+        }
+        currentState = TurnState.TurnStart;
     }
 }

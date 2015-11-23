@@ -2,13 +2,6 @@
 using System.Collections;
 using System.Collections.Generic;
 
-enum PlayerState
-{
-    TurnStart,
-    Actions,
-    TurnEnd
-}
-
 public class GameManager : MonoBehaviour {
 
     public GridHandler map;
@@ -16,11 +9,10 @@ public class GameManager : MonoBehaviour {
     private Character myChar;
     private Character myChar2;
 
-    private int playerIndex = 0;
     private List<Faction> factions = new List<Faction>();
+    public List<Faction> Factions { get { return factions; } }
+
     public List<Character> Characters = new List<Character>();
-    private int currentFactionTurn = 0;
-    private PlayerState currentState = PlayerState.TurnStart;
 
     List<Node> possibleSpots = new List<Node>();
     List<Node> path = new List<Node>();
@@ -68,80 +60,13 @@ public class GameManager : MonoBehaviour {
         
 
         gameObject.GetComponent<UIManager>().InitMap();
+
+        TurnManager.Initialize(factions);
         Debug.Log("Map in start: " + map);
 	}
 	
 	// Update is called once per frame
 	void Update () {
-        // Debug map stuff leave alone for now.
-	    for(int i = 0; i < 10; ++i){
-                for(int j = 0; j < 10; ++j){
-                    map.map[j, i].Draw();
-            }
-        }
-        
-        for (int i = 0; i < possibleSpots.Count; ++i)
-        {
-            Debug.DrawLine(new Vector3(possibleSpots[i].X * 5, possibleSpots[i].Y * -5), new Vector3((possibleSpots[i].X + 1) * 5, (possibleSpots[i].Y + 1) * -5), Color.red);
-            Debug.DrawLine(new Vector3((possibleSpots[i].X + 1) * 5, possibleSpots[i].Y * -5), new Vector3(possibleSpots[i].X * 5, (possibleSpots[i].Y + 1) * -5), Color.red);
-        }
-
-        if (path != null)
-        {
-            for (int i = 0; i < path.Count; ++i)
-            {
-                Debug.DrawLine(new Vector3(path[i].X * 5, path[i].Y * -5), new Vector3((path[i].X + 1) * 5, (path[i].Y + 1) * -5), Color.yellow);
-                Debug.DrawLine(new Vector3((path[i].X + 1) * 5, path[i].Y * -5), new Vector3(path[i].X * 5, (path[i].Y + 1) * -5), Color.yellow);
-            }
-        }
-
-        switch (currentState)
-        {
-            case PlayerState.Actions:
-                TurnAction();
-                break;
-            case PlayerState.TurnStart:
-                TurnStart();
-                break;
-            case PlayerState.TurnEnd:
-                TurnEnd();
-                break;
-        }
-
+        TurnManager.Update();
 	}
-
-    private void TurnStart()
-    {
-        for (int i = 0; i < factions[currentFactionTurn].Units.Count; ++i)
-        {
-            factions[currentFactionTurn].Units[i].BeginTurn();
-        }
-        currentState = PlayerState.Actions;
-        TurnAction(); // We actually call turn action here because there's no reason to waste an update.
-    }
-
-    private void TurnAction()
-    {
-        if (playerIndex == currentFactionTurn) // If it's the player's turn
-        {
-
-        }
-        else // AI stuff
-        {
-
-
-        }
-
-    }
-
-    private void TurnEnd()
-    {
-        for (int i = 0; i < factions[currentFactionTurn].Units.Count; ++i)
-        {
-            factions[currentFactionTurn].Units[i].BeginTurn();
-        }
-        currentState = PlayerState.TurnStart;
-    }
-
-    public List<Faction> Factions { get { return factions; } }
 }

@@ -51,6 +51,7 @@ public partial class Character{
     private Dictionary<Condition, int> myConditions;
     private List<Character> characterList;
     public bool canAct;
+    public bool canMove;
 
     private int faction;
 
@@ -76,6 +77,8 @@ public partial class Character{
     {
         this.y = 0;
         this.x = 0;
+        this.canAct = false;
+        this.canMove = false;
         this.myLocation = null;
         this.map = map;
         this.myAbilities = null;
@@ -124,6 +127,8 @@ public partial class Character{
         this.faction = faction;
         this.characterList = characterList;
         this.characterList.Add(this);
+        this.canMove = false;
+        this.canAct = false;
 
         // Add all the traits to the character's event handlers
         List<Trait> myTraits = myData.traits;
@@ -294,6 +299,9 @@ public partial class Character{
                     break;
             }
         }
+
+        this.canAct = true;
+        this.canMove = true;
     }
 
     /// <summary>
@@ -328,6 +336,9 @@ public partial class Character{
                 RemoveCondition(myCondition);
             }
         }
+
+        this.canAct = false;
+        this.canMove = false;
     }
 
 }
