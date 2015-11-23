@@ -57,10 +57,12 @@ public static class TurnManager
         }
         else // AI stuff
         {
-
-
+            foreach(Character character in factions[currentFactionTurn].Units)
+            {
+                AIBehavior.DoTurn(character);
+            }
+            currentState = TurnState.TurnEnd;
         }
-
     }
 
     private static void TurnEnd()
