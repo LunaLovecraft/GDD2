@@ -45,4 +45,10 @@ public class TileScript : MonoBehaviour {
         }
         uiMan.TileExited(this.x, this.y);
     }
+
+    public void DestroyHover()
+    {
+        Destroy(hoverTile);
+        hoverTile = null;
+    }
 }

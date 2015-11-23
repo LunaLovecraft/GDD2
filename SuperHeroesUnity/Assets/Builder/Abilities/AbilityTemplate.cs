@@ -30,6 +30,13 @@ public static partial class Abilities
         List<List<Node>> choices = new List<List<Node>>();
         choices.Add(new List<Node>());
         choices[0].Add(myChar.MyLocation);
+        choices[0].Add(map.map[myChar.MyLocation.Y, myChar.MyLocation.X -1]);
+        choices.Add(new List<Node>());
+        if(myChar.MyLocation.X + 1 < map.Width)
+        choices[1].Add(map.map[myChar.MyLocation.Y, myChar.MyLocation.X + 1]);
+        if (myChar.MyLocation.X + 2 < map.Width)
+        choices[1].Add(map.map[myChar.MyLocation.Y, myChar.MyLocation.X + 2]);
+
 
         UIInformationHandler.InformationStack.Push(new UIInformation(myChar, map, choices, 1, ExamplePartTwo));
     }
@@ -38,6 +45,7 @@ public static partial class Abilities
     {
         for (int i = 0; i < affectedNodes.Count; ++i)
         {
+            Debug.Log("Attacking with Example at " + affectedNodes[i].X + ", " + affectedNodes[i].Y);
             if (affectedNodes[i].myCharacter != null && affectedFaction != myChar.Faction)
             {
                 affectedNodes[i].myCharacter.DamageCharacter(10, DamageType.Fire);
