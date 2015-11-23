@@ -198,7 +198,7 @@ public class Node
     /// <param name="speedAtPoint">Used for recursion, set to null if using normally</param>
     /// <param name="add">Used for recursion, leave alone unless needed</param>
     /// <returns></returns>
-    public List<Node> FindPossibleMoves(int movementType, int speed, List<Node> possibleMoves = null, List<int> speedAtPoint = null, bool add = true)
+    public List<Node> FindPossibleMoves(int movementType, int speed, List<Node> possibleMoves = null, List<int> speedAtPoint = null, bool add = true, int ignoreFaction = -1)
     {
         if (possibleMoves == null)
         {
@@ -211,13 +211,15 @@ public class Node
         switch (movementType)
         {
             case 0: // Normal
-                if (add && this.height != TerrainHeight.Empty && this.height != TerrainHeight.Wall)
+                if (add && this.height != TerrainHeight.Empty && this.height != TerrainHeight.Wall &&
+                    (myCharacter == null || myCharacter.Faction == ignoreFaction))
                 {
                     possibleMoves.Add(this);
                     speedAtPoint.Add(speed);
                 }
 
-                if (speed > 0 && this.height != TerrainHeight.Empty && this.height != TerrainHeight.Wall)
+                if (speed > 0 && this.height != TerrainHeight.Empty && this.height != TerrainHeight.Wall &&
+                    (myCharacter == null || myCharacter.Faction == ignoreFaction))
                 {
 
 
@@ -280,13 +282,15 @@ public class Node
                 break;
 
             case 1: // Flying
-                if (add)
+                if (add &&
+                    (myCharacter == null || myCharacter.Faction == ignoreFaction))
                 {
                     possibleMoves.Add(this);
                     speedAtPoint.Add(speed);
                 }
 
-                if(speed > 0)
+                if (speed > 0 &&
+                    (myCharacter == null || myCharacter.Faction == ignoreFaction))
                 {
                     int index = 0;
                     if (left != null)
@@ -347,13 +351,15 @@ public class Node
                 break;
 
             case 2: // Underground
-                if (add && this.height != TerrainHeight.Empty)
+                if (add && this.height != TerrainHeight.Empty &&
+                    (myCharacter == null || myCharacter.Faction == ignoreFaction))
                 {
                     possibleMoves.Add(this);
                     speedAtPoint.Add(speed);
                 }
 
-                if (speed > 0 && this.height != TerrainHeight.Empty)
+                if (speed > 0 && this.height != TerrainHeight.Empty &&
+                    (myCharacter == null || myCharacter.Faction == ignoreFaction))
                 {
 
 
