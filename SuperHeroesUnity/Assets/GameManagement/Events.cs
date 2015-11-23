@@ -71,6 +71,7 @@ public partial class Character {
     public event EventHandler OnKilled;
     public event EventHandler OnGainCondition;
     public event EventHandler OnLoseCondition;
+	public event EventHandler OnDealDamage;
 
     // Make it safe so that functions are called properly.
     protected virtual void E_Spawn(CharEventArgs e)
@@ -112,6 +113,14 @@ public partial class Character {
             OnDamaged(this, e);
         }
     }
+
+	protected virtual void E_DealDamage(DamageEventArgs e)
+	{
+		if (OnDealDamage != null)
+		{
+			OnDealDamage(this, e);
+		}
+	}
 
     protected virtual void E_Healed(HealEventArgs e)
     {

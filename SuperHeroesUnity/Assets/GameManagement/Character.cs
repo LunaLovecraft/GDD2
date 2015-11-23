@@ -160,6 +160,19 @@ public partial class Character{
         }
     }
 
+	/// <summary>
+	/// Damages a character for a specified amount
+	/// </summary>
+	/// <param name="damage">The amount to damage</param>
+	/// <param name="type">The type of the damage</param>
+	public void DamageOtherCharacter(Character otherChar, int damage, DamageType type = DamageType.Physical){
+		// Call the damaged event.
+		DamageEventArgs e = new DamageEventArgs(this, type, damage);
+		E_DealDamage(e);
+		
+		otherChar.DamageCharacter (e.damage, e.type);
+	}
+
     /// <summary>
     /// Heals a character for a specified amount.
     /// </summary>

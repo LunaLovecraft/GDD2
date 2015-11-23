@@ -8,7 +8,8 @@ public delegate void AbilityAddition(Character myChar, GridHandler map, int affe
 public enum AbilityInfo{
     Range,
     Offensive,
-    Splash
+    Splash,
+	Description
 }
 
 /// <summary>
@@ -44,6 +45,10 @@ public static partial class Abilities{
             case AbilityInfo.Splash:
                 infoType = "Splash";
                 break;
+
+			case AbilityInfo.Description:
+				infoType = "Description";
+				break;
 
             default:
                 infoType = "Range";
