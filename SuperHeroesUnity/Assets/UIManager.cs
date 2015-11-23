@@ -21,6 +21,7 @@ public class UIManager : MonoBehaviour {
     GridHandler map;
     List<GameObject> CharacterUI;
     List<Node> Moves;
+    int SelectedAbilityOptions = -1;
     List<GameObject> BackUI;
     List<GameObject> AttackUI;
     List<GameObject> HomeUI;
@@ -116,17 +117,20 @@ public class UIManager : MonoBehaviour {
         }
         else if (currentState == UIState.Planning)
         {
+            int index = 0;
             foreach(List<Node> list in UIInformationHandler.InformationStack.Peek().options)
             {
                 if(list.Contains(map.map[y, x]))
                 {
+                    SelectedAbilityOptions = index;
                     foreach(Node tile in list)
                     {
                         GameObject hoverTile = Instantiate(HoverTile);
                         hoverTile.GetComponent<GlowManager>().moveTo(tile.X, tile.Y);
-                        Tiles[y, x].GetComponent<TileScript>().hoverTile = hoverTile;
+                        Tiles[tile.Y, tile.X].GetComponent<TileScript>().hoverTile = hoverTile;
                     }
                 }
+                index += 1;
             }
         }
     }
@@ -138,12 +142,13 @@ public class UIManager : MonoBehaviour {
             foreach(List<Node> list in UIInformationHandler.InformationStack.Peek().options)
                 if (list.Contains(map.map[y, x]))
                 {
+                    SelectedAbilityOptions = -1;
+                    Debug.Log("found list containing tile at" + x + ", " + y);
                     foreach (Node tile in list)
                     {
                         if(Tiles[tile.Y, tile.X].GetComponent<TileScript>().hoverTile != null)
                         {
-                            Destroy(Tiles[tile.Y, tile.X].GetComponent<TileScript>().hoverTile);
-                            Tiles[tile.Y, tile.X].GetComponent<TileScript>().hoverTile = null;
+                            Tiles[tile.Y, tile.X].GetComponent<TileScript>().DestroyHover();
                         }
                     }
                 }
@@ -176,9 +181,9 @@ public class UIManager : MonoBehaviour {
                 }
             }
         }
-        else if(currentState == UIState.Planning)
+        else if(currentState == UIState.Planning && SelectedAbilityOptions != -1)
         {
-
+            UIInformationHandler.InformationStack.Peek().SelectOption(SelectedAbilityOptions);
         }
         else if(currentState == UIState.Default)
         {
@@ -213,12 +218,28 @@ public class UIManager : MonoBehaviour {
             case "Back":
                 if (currentState == UIState.Attacking || currentState == UIState.Planning)
                 {
-                    GameObject[] toDelete = GameObject.FindGameObjectsWithTag("Abilities");
+                    List<GameObject> toDelete = new List<GameObject>();
+                    toDelete.AddRange(GameObject.FindGameObjectsWithTag("Abilities"));
+                    toDelete.AddRange(GameObject.FindGameObjectsWithTag("Hovers"));
                     foreach(GameObject btn in toDelete)
                     {
                         Destroy(btn);
                     }
+                    foreach(List<Node> list in UIInformationHandler.InformationStack.Peek().options)
+                    {
+                        foreach(Node tile in list)
+                        {
+                            Tiles[tile.Y, tile.X].GetComponent<SpriteRenderer>().color = Tiles[tile.Y, tile.X].GetComponent<TileScript>().baseColor;
+                        }
+                    }
+                } else if(currentState == UIState.Movement)
+                {
+                    foreach (Node node in Moves)
+                    {
+                        Tiles[node.Y, node.X].GetComponent<SpriteRenderer>().color = Tiles[node.Y, node.X].GetComponent<TileScript>().baseColor;
+                    }
                 }
+
                 currentState = (UIState) History.Pop();
                 Debug.Log(currentState);
                 break;
@@ -270,10 +291,7 @@ public class UIManager : MonoBehaviour {
         {
             obj.SetActive(true);
         }
-        foreach (Node node in Moves)
-        {
-            Tiles[node.Y, node.X].GetComponent<SpriteRenderer>().color = Tiles[node.Y, node.X].GetComponent<TileScript>().baseColor;
-        }
+        
     }
 
     void drawSelectingUI()
@@ -369,6 +387,7 @@ public class UIManager : MonoBehaviour {
     {
         Debug.Log("Click");
         script(myChar, map);
+        History.Push(currentState);
         currentState = UIState.Planning;
         UIUpdate();
     }
