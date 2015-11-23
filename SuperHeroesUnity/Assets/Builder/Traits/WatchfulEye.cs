@@ -20,8 +20,8 @@ public static partial class Traits
     {
 		DamageEventArgs data = (DamageEventArgs)e;
 
-		if (UnityEngine.Random.Range(0,4) == 3) {
-			data.damage*=1.25;
+		if (UnityEngine.Random.Range(0,10) == 9) {
+			data.damage*=2;
 		}
     }
 }
