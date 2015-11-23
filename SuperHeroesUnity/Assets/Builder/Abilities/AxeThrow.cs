@@ -60,6 +60,6 @@ public static partial class Abilities{
 				myChar.DamageOtherCharacter(affectedNodes[i].myCharacter, 5, DamageType.Physical);
 			}
 		}
-		UIInformationHandler.InformationStack.Clear ();
+		//UIInformationHandler.InformationStack.Clear ();
 	}
 }

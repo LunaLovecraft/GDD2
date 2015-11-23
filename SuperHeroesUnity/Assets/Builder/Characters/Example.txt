@@ -3,6 +3,6 @@ Example
 4
 ground
 Abilities
-Example
+Stomp
 Traits
 Example
