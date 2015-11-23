@@ -420,6 +420,73 @@ public class Node
                 }
                 break;
 
+            default:
+                if (add)
+                {
+                    possibleMoves.Add(this);
+                    speedAtPoint.Add(speed);
+                }
+
+                if (speed > 0)
+                {
+                    int index = 0;
+                    if (left != null)
+                    {
+                        index = possibleMoves.IndexOf(left);
+                        if (index == -1)
+                        {   
+                            left.FindPossibleMoves(movementType, speed - 1, possibleMoves, speedAtPoint);
+                        }
+                        else if (speed - 1 > speedAtPoint[index])
+                        {
+                            speedAtPoint[index] = speed - 1;
+                            left.FindPossibleMoves(movementType, speed - 1, possibleMoves, speedAtPoint, false);
+                        }
+                    }
+                    if (right != null)
+                    {
+                        index = possibleMoves.IndexOf(right);
+                        if (index == -1)
+                        {
+                            right.FindPossibleMoves(movementType, speed - 1, possibleMoves, speedAtPoint);
+                        }
+                        else if (speed - 1 > speedAtPoint[index])
+                        {
+                            speedAtPoint[index] = speed - 1;
+                            right.FindPossibleMoves(movementType, speed - 1, possibleMoves, speedAtPoint, false);
+                        }
+                    }
+                    if (down != null)
+                    {
+                        index = possibleMoves.IndexOf(down);
+                        if (index == -1)
+                        {
+                            down.FindPossibleMoves(movementType, speed - 1, possibleMoves, speedAtPoint);
+                        }
+                        else if (speed - 1 > speedAtPoint[index])
+                        {
+                            speedAtPoint[index] = speed - 1;
+                            down.FindPossibleMoves(movementType, speed - 1, possibleMoves, speedAtPoint, false);
+                        }
+                    }
+                    if (up != null)
+                    {
+                        index = possibleMoves.IndexOf(up);
+                        if (index == -1)
+                        {
+                            up.FindPossibleMoves(movementType, speed - 1, possibleMoves, speedAtPoint);
+                        }
+                        else if (speed - 1 > speedAtPoint[index])
+                        {
+                            speedAtPoint[index] = speed - 1;
+                            up.FindPossibleMoves(movementType, speed - 1, possibleMoves, speedAtPoint, false);
+                        }
+                    }
+
+                }
+
+                break;
+
         }
 
         return possibleMoves;
