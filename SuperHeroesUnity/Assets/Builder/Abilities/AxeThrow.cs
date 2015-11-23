@@ -9,7 +9,7 @@ public static partial class Abilities{
 	/// </summary>
 	public static int AxeThrowRange = 6;
 	
-	public static int AxeThrowSplash = 3;
+	public static int AxeThrowSplash = 2;
 	
 	/// <summary>
 	/// Offensive info
@@ -35,13 +35,12 @@ public static partial class Abilities{
 		//Add a list of nodes to the previous list, representing a set of new affected nodes;
 		choices.Add(new List<Node>());
 		//add all of the nodes within 2 Moves of the player
-		List<Node> allSpace = myChar.MyLocation.FindPossibleMoves((int)MovementType.Ground, 2);
+		List<Node> allSpace = myChar.MyLocation.FindPossibleMoves(-1, 6);
 		foreach(Node tile in allSpace)
 		{
 			if(tile.myCharacter != null && tile.myCharacter.Faction != myChar.Faction)
 			{
-				List<Node> target = new List<Node>();
-				target.Add(tile);
+                List<Node> target = tile.FindPossibleMoves(-1, 2);
 				choices.Add(target);
 				
 			}
@@ -60,6 +59,7 @@ public static partial class Abilities{
 				myChar.DamageOtherCharacter(affectedNodes[i].myCharacter, 5, DamageType.Physical);
 			}
 		}
-		//UIInformationHandler.InformationStack.Clear ();
+        UIInformationHandler.InformationStack.Clear();
+        myChar.canAct = false;
 	}
 }

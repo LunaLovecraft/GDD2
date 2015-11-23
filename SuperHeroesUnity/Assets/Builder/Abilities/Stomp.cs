@@ -35,7 +35,8 @@ public static partial class Abilities{
 		//Add a list of nodes to the previous list, representing a set of new affected nodes;
 		choices.Add(new List<Node>());
 		//add all of the nodes within 2 Moves of the player
-		choices[0] = myChar.MyLocation.FindPossibleMoves((int)MovementType.Ground, 2);
+		choices[0] = myChar.MyLocation.FindPossibleMoves(-1, 2);
+        choices[0].Remove(myChar.MyLocation);
 		
 		//IMPORTANT
 		//push this so that the UI can access your stuff <3 -Sean

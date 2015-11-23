@@ -35,8 +35,8 @@ public static partial class Abilities{
 		//Add a list of nodes to the previous list, representing a set of new affected nodes;
 		choices.Add(new List<Node>());
 		//add all of the nodes within 2 Moves of the player
-		choices[0] = myChar.MyLocation.FindPossibleMoves((int)MovementType.Flying, 3);
-		
+		choices[0] = myChar.MyLocation.FindPossibleMoves(-1, 3);
+        choices[0].Remove(myChar.MyLocation);
 		//IMPORTANT
 		//push this so that the UI can access your stuff <3 -Sean
 		UIInformationHandler.InformationStack.Push(new UIInformation(myChar, map, choices, 1, ChillOfDeathEffect));
@@ -51,6 +51,7 @@ public static partial class Abilities{
 				myChar.DamageOtherCharacter(affectedNodes[i].myCharacter, 5, DamageType.Cold);
 			}
 		}
-		//UIInformationHandler.InformationStack.Clear ();
+        UIInformationHandler.InformationStack.Clear();
+        myChar.canAct = false;
 	}
 }

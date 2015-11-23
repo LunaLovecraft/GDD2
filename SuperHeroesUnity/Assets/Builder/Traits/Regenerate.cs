@@ -17,7 +17,7 @@ public static partial class Traits
     // If a trait causes multiple events, then it can have multiple functions to it.
     public static void Event_Regenerate(object sender, EventArgs e)
     {
-		HealEventArgs data = (HealEventArgs)e;
-		data.heal = 2;
+		CharEventArgs data = (CharEventArgs)e;
+        data.myChar.HealCharacter(2);
     }
 }

@@ -169,7 +169,7 @@ public class UIManager : MonoBehaviour {
 
     public void TileClicked(int x, int y)
     {
-        if (currentState == UIState.Movement)
+        if (currentState == UIState.Movement && selectedCharacter.canMove)
         {
             foreach (Node node in Moves)
             {
@@ -191,7 +191,7 @@ public class UIManager : MonoBehaviour {
                 }
             }
         }
-        else if(currentState == UIState.Planning && SelectedAbilityOptions != -1)
+        else if(currentState == UIState.Planning && SelectedAbilityOptions != -1 && selectedCharacter.canAct)
         {
             Debug.Log("Using Ability");
             UIInformationHandler.InformationStack.Peek().SelectOption(SelectedAbilityOptions);
@@ -205,8 +205,9 @@ public class UIManager : MonoBehaviour {
                 Character nextChar = null;
                 for (int i = 0; i < gm.Factions[TurnManager.currentFactionTurn].Units.Count; ++i)
                 {
-                    if ((nextChar = gm.Factions[TurnManager.currentFactionTurn].Units[i]).canAct)
+                    if ((gm.Factions[TurnManager.currentFactionTurn].Units[i]).canAct)
                     {
+                        nextChar = gm.Factions[TurnManager.currentFactionTurn].Units[i];
                         break;
                     }
                 }
@@ -350,7 +351,8 @@ public class UIManager : MonoBehaviour {
         {
             UIInformation tempInfo = UIInformationHandler.InformationStack.Peek();
             AbilityName.text = selectedAbility.Method.Name;
-            AbilityDescription.text = Abilities.GetAbilityInfo(selectedAbility.Method.Name, AbilityInfo.Description) as string;
+            AbilityDescription.text = "Range: " +  Abilities.GetAbilityInfo(selectedAbility.Method.Name, AbilityInfo.Range) as string + "\nDescription: " +
+            Abilities.GetAbilityInfo(selectedAbility.Method.Name, AbilityInfo.Description) as string;
             foreach(List<Node> list in tempInfo.options)
             {
                 foreach(Node tile in list)

@@ -63,6 +63,7 @@ public static partial class Abilities
 				affectedNodes[i].myCharacter.HealCharacter(5);
 			}
 		}
-		//UIInformationHandler.InformationStack.Clear ();
+        UIInformationHandler.InformationStack.Clear();
+        myChar.canAct = false;
 	}
 }

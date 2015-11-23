@@ -25,7 +25,7 @@ public static class TurnManager
 
     public static void Update()
     {
-
+        Debug.Log(currentState);
         switch (currentState)
         {
             case TurnState.Actions:
@@ -73,6 +73,11 @@ public static class TurnManager
         for (int i = 0; i < factions[currentFactionTurn].Units.Count; ++i)
         {
             factions[currentFactionTurn].Units[i].EndTurn();
+        }
+        currentFactionTurn++;
+        if (currentFactionTurn >= factions.Count)
+        {
+            currentFactionTurn = 0;
         }
         currentState = TurnState.TurnStart;
     }

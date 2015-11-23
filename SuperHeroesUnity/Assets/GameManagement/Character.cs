@@ -309,6 +309,7 @@ public partial class Character{
     /// </summary>
     public void EndTurn()
     {
+        Debug.Log("Ending Turn");
         // Called at the beginning of every turn.
         E_EndTurn(new CharEventArgs(this));
 
