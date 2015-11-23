@@ -1,7 +1,5 @@
 ﻿using UnityEngine;
 using System.Collections;
-using UnityEngine;
-using System.Collections;
 using System.Collections.Generic;
 
 public static partial class Abilities{
@@ -50,8 +48,9 @@ public static partial class Abilities{
 		{
 			if (affectedNodes[i].myCharacter != null && affectedFaction != myChar.Faction)
 			{
-				affectedNodes[i].myCharacter.DamageCharacter(7, DamageType.Physical);
+				myChar.DamageOtherCharacter(affectedNodes[i].myCharacter, 7, DamageType.Physical);
 			}
 		}
+		UIInformationHandler.InformationStack.Clear ();
 	}
 }

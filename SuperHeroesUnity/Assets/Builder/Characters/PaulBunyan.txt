@@ -1,0 +1,9 @@
+PaulBunyan
+30
+4
+ground
+Abilities
+AxeThrow
+Stomp
+Traits
+Giant

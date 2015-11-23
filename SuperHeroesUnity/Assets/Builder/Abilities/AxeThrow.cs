@@ -1,7 +1,5 @@
 ﻿using UnityEngine;
 using System.Collections;
-using UnityEngine;
-using System.Collections;
 using System.Collections.Generic;
 
 public static partial class Abilities{
@@ -24,7 +22,7 @@ public static partial class Abilities{
 	public static string AxeThrowDescription = "Throws a terrifying axe";
 
 	/// <summary>
-	/// Stomp Ability, hurts enemies within a 2 tile radius of the player
+	/// Axe Throw
 	/// </summary>
 	/// <param name="myChar"></param>
 	/// <param name="map"></param>
@@ -37,12 +35,20 @@ public static partial class Abilities{
 		//Add a list of nodes to the previous list, representing a set of new affected nodes;
 		choices.Add(new List<Node>());
 		//add all of the nodes within 2 Moves of the player
-		choices[0] = myChar.MyLocation.FindPossibleMoves((int)MovementType.Ground, 2);
-		
+		List<Node> allSpace = myChar.MyLocation.FindPossibleMoves((int)MovementType.Ground, 2);
+		foreach(Node tile in allSpace)
+		{
+			if(tile.myCharacter != null && tile.myCharacter.Faction != myChar.Faction)
+			{
+				List<Node> target = new List<Node>();
+				target.Add(tile);
+				choices.Add(target);
+				
+			}
+		}
 		//IMPORTANT
 		//push this so that the UI can access your stuff <3 -Sean
 		UIInformationHandler.InformationStack.Push(new UIInformation(myChar, map, choices, 1, AxeThrowEffect));
-
 	}
 	
 	public static void AxeThrowEffect(Character myChar, GridHandler map, int affectedFaction, List<Node> affectedNodes)
@@ -51,10 +57,9 @@ public static partial class Abilities{
 		{
 			if (affectedNodes[i].myCharacter != null && affectedFaction != myChar.Faction)
 			{
-				affectedNodes[i].myCharacter.DamageCharacter(7, DamageType.Physical);
+				myChar.DamageOtherCharacter(affectedNodes[i].myCharacter, 5, DamageType.Physical);
 			}
 		}
-
 		UIInformationHandler.InformationStack.Clear ();
 	}
 }
