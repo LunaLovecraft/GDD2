@@ -8,6 +8,8 @@ public class GameManager : MonoBehaviour {
 
     private Character myChar;
     private Character myChar2;
+	private Character myChar3;
+	private Character myChar4;
 
     private List<Faction> factions = new List<Faction>();
     public List<Faction> Factions { get { return factions; } }
@@ -33,22 +35,29 @@ public class GameManager : MonoBehaviour {
         map.map[4, 4].height = TerrainHeight.Empty;
         map.map[4, 5].height = TerrainHeight.Empty;
         map.map[4, 6].height = TerrainHeight.Empty;
-        myChar = new Character(map, "Example");
-        myChar2 = new Character(map, "Example");
 
-        if (myChar.Create(0, 0, 0, Characters) == CHAR_INIT.CHAR_AT_LOC_ERROR)
+        myChar = new Character(map, "PaulBunyan");
+		//myChar2 = new Character (map, "Wink");
+		//myChar3 = new Character (map, "Nox");
+        myChar4 = new Character(map, "GreyDeath");
+
+        if (myChar.Create(3, 0, 0, Characters) == CHAR_INIT.CHAR_AT_LOC_ERROR)
         {
 
         }
-        if (myChar2.Create(1, 8, 1, Characters) == CHAR_INIT.CHAR_AT_LOC_ERROR)
-        {
+        //if (myChar2.Create(4, 0, 0, Characters) == CHAR_INIT.CHAR_AT_LOC_ERROR)
+        //{
 
-        }
+       // }
+		//myChar3.Create (3, 8, 1, Characters);
+		myChar4.Create (4, 8, 1, Characters);
         List<Character> heroes = new List<Character>();
         List<Character> villains = new List<Character>();
 
         heroes.Add(myChar);
-        villains.Add(myChar2);
+		//heroes.Add (myChar2);
+        //villains.Add(myChar3);
+		villains.Add(myChar4);
 
         factions.Add(new Faction(heroes));
         factions.Add(new Faction(villains));

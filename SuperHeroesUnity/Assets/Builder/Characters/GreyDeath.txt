@@ -1,0 +1,9 @@
+GreyDeath
+20
+3
+flying
+Abilities
+LifeWither
+ChillOfDeath
+Traits
+Regenerate

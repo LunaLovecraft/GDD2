@@ -1,9 +1,9 @@
-PaulBunyan
-30
+Wink
+20
 2
 ground
 Abilities
 AxeThrow
 Stomp
 Traits
-Giant
+WatchfulEye

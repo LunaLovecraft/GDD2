@@ -1,6 +1,6 @@
-PaulBunyan
-30
-2
+Nox
+25
+4
 ground
 Abilities
 AxeThrow
