@@ -26,9 +26,18 @@ public class UIManager : MonoBehaviour {
     List<GameObject> AttackUI;
     List<GameObject> HomeUI;
     List<GameObject> MoveUI;
+    List<GameObject> PlanningUI;
     public Button abilityButton;
     Character selectedCharacter;
     public GameObject HoverTile;
+    public Text CharName;
+    public Text CharHealth;
+    public Text CharMove;
+    public Text AbilityName;
+    public Text AbilityDescription;
+    Ability selectedAbility;
+
+
 	// Use this for initialization
 	void Start () {
 	}
@@ -40,12 +49,13 @@ public class UIManager : MonoBehaviour {
         HomeUI = new List<GameObject>();
         MoveUI = new List<GameObject>();
         Moves = new List<Node>();
+        PlanningUI = new List<GameObject>();
 
         BackUI.AddRange(GameObject.FindGameObjectsWithTag("BackUI"));
         AttackUI.AddRange(GameObject.FindGameObjectsWithTag("AttackUI"));
         HomeUI.AddRange(GameObject.FindGameObjectsWithTag("HomeUI"));
         MoveUI.AddRange(GameObject.FindGameObjectsWithTag("MoveUI"));
-
+        PlanningUI.AddRange(GameObject.FindGameObjectsWithTag("PlanningUI"));
         
         CharacterUI = new List<GameObject>();
         gm = gameObject.GetComponent<GameManager>();
@@ -91,7 +101,7 @@ public class UIManager : MonoBehaviour {
                         character.GetComponent<CharacterSpriteScript>().Y = y;
                         character.GetComponent<SpriteRenderer>().color = Color.green;
                     } else character.GetComponent<SpriteRenderer>().color = Color.red;
-                    selectedCharacter = map.map[y, x].myCharacter;
+                    SelectCharacter(map.map[y, x].myCharacter);
                     CharacterUI.Add(character);
          
                 }
@@ -105,6 +115,9 @@ public class UIManager : MonoBehaviour {
     public void SelectCharacter(Character newSelection)
     {
         selectedCharacter = newSelection;
+        CharName.text = selectedCharacter.Name;
+        CharHealth.text = selectedCharacter.Health + " / " + selectedCharacter.MaxHealth;
+        CharMove.text = selectedCharacter.Speed + " " + selectedCharacter.Movement;
     }
 
     public void TileHovered(int x, int y)
@@ -225,11 +238,14 @@ public class UIManager : MonoBehaviour {
                     {
                         Destroy(btn);
                     }
-                    foreach(List<Node> list in UIInformationHandler.InformationStack.Peek().options)
+                    if (currentState == UIState.Planning)
                     {
-                        foreach(Node tile in list)
+                        foreach (List<Node> list in UIInformationHandler.InformationStack.Peek().options)
                         {
-                            Tiles[tile.Y, tile.X].GetComponent<SpriteRenderer>().color = Tiles[tile.Y, tile.X].GetComponent<TileScript>().baseColor;
+                            foreach (Node tile in list)
+                            {
+                                Tiles[tile.Y, tile.X].GetComponent<SpriteRenderer>().color = Tiles[tile.Y, tile.X].GetComponent<TileScript>().baseColor;
+                            }
                         }
                     }
                 } else if(currentState == UIState.Movement)
@@ -256,15 +272,18 @@ public class UIManager : MonoBehaviour {
         {
             case UIState.Movement:
                 drawMovementUI();
+                selectedAbility = null;
                 break;
             case UIState.Attacking:
                 drawAttackingUI();
+                selectedAbility = null;
                 break;
             case UIState.Planning:
                 drawSelectingUI();
                 break;
             default:
                 drawDefaultUI();
+                selectedAbility = null;
                 break;
         }
     }
@@ -283,6 +302,7 @@ public class UIManager : MonoBehaviour {
         unwanted.AddRange(AttackUI);
         unwanted.AddRange(BackUI);
         unwanted.AddRange(MoveUI);
+        unwanted.AddRange(PlanningUI);
         foreach(GameObject obj in unwanted)
         {
             obj.SetActive(false);
@@ -296,10 +316,19 @@ public class UIManager : MonoBehaviour {
 
     void drawSelectingUI()
     {
+        List<GameObject> planUI = new List<GameObject>();
+        planUI.AddRange(PlanningUI);
+        foreach (GameObject obj in planUI)
+        {
+            obj.SetActive(true);
+        }
+
         Debug.Log(UIInformationHandler.InformationStack.Count);
         if(UIInformationHandler.InformationStack.Count > 0)
         {
             UIInformation tempInfo = UIInformationHandler.InformationStack.Peek();
+            AbilityName.text = selectedAbility.Method.Name;
+            AbilityDescription.text = Abilities.GetAbilityInfo(selectedAbility.Method.Name, AbilityInfo.Description) as string;
             foreach(List<Node> list in tempInfo.options)
             {
                 foreach(Node tile in list)
@@ -349,6 +378,7 @@ public class UIManager : MonoBehaviour {
         List<GameObject> unwanted = new List<GameObject>();
         unwanted.AddRange(MoveUI);
         unwanted.AddRange(HomeUI);
+        unwanted.AddRange(PlanningUI);
         foreach (GameObject obj in unwanted)
         {
             obj.SetActive(false);
@@ -389,6 +419,7 @@ public class UIManager : MonoBehaviour {
         script(myChar, map);
         History.Push(currentState);
         currentState = UIState.Planning;
+        selectedAbility = script;
         UIUpdate();
     }
 

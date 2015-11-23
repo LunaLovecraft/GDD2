@@ -55,7 +55,7 @@ public static partial class Abilities{
                 break;
         }
 
-        return (int)typeof(Abilities).GetField(abilityName + infoType).GetValue(null);
+        return typeof(Abilities).GetField(abilityName + infoType).GetValue(null);
     }
 
     public static List<Node> TilesInRange(Node position, string abilityName)
