@@ -20,6 +20,8 @@ public static partial class Abilities
     /// </summary>
     public static bool ExampleOffensive = true;
 
+    public static string ExampleDescription = "This is a sample Description";
+
    
 
     /// <summary>
