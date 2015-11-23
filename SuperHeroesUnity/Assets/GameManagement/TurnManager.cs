@@ -15,10 +15,12 @@ public static class TurnManager
     public static List<Faction> factions;
     public static int currentFactionTurn = 0;
     private static int playerIndex = 0;
+    static UIManager uiMan;
 
     public static void Initialize(List<Faction> inputFactions)
     {
         factions = inputFactions;
+        uiMan = GameObject.FindGameObjectWithTag("GameManager").GetComponent<UIManager>();
     }
 
     public static void Update()
@@ -46,6 +48,9 @@ public static class TurnManager
             factions[currentFactionTurn].Units[i].BeginTurn();
         }
         currentState = TurnState.Actions;
+        Debug.Log("Selecting a character");
+        uiMan.SelectCharacter(factions[currentFactionTurn].Units[0]);
+
         TurnAction(); // We actually call turn action here because there's no reason to waste an update.
     }
 

@@ -51,6 +51,7 @@ public static partial class Abilities{
 				myChar.DamageOtherCharacter(affectedNodes[i].myCharacter, 7, DamageType.Physical);
 			}
 		}
-		//UIInformationHandler.InformationStack.Clear ();
+		UIInformationHandler.InformationStack.Clear();
+        myChar.canAct = false;
 	}
 }
