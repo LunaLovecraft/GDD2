@@ -283,14 +283,14 @@ public class Node
 
             case 1: // Flying
                 if (add &&
-                    (myCharacter == null || myCharacter.Faction == ignoreFaction))
+                    (myCharacter == null || myCharacter.Faction == ignoreFaction) && this.height != TerrainHeight.Empty)
                 {
                     possibleMoves.Add(this);
                     speedAtPoint.Add(speed);
                 }
 
                 if (speed > 0 &&
-                    (myCharacter == null || myCharacter.Faction == ignoreFaction))
+                    (myCharacter == null || myCharacter.Faction == ignoreFaction) && this.height != TerrainHeight.Empty)
                 {
                     int index = 0;
                     if (left != null)
