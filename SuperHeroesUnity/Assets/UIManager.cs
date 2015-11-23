@@ -344,6 +344,7 @@ public class UIManager : MonoBehaviour {
         }
         
         List<GameObject> AbilityButtons = new List<GameObject>();
+        float yOffset = 0.0f;
         foreach(Ability ability in selectedCharacter.MyAbilities)
         {
             Debug.Log(CurrentCanvas.transform);
@@ -353,11 +354,12 @@ public class UIManager : MonoBehaviour {
             button.transform.localPosition = new Vector3(0, 0, 0);
             button.GetComponent<RectTransform>().anchorMax = new Vector2(0.0f, 0.5f);
             button.GetComponent<RectTransform>().anchorMin = new Vector2(0.0f, 0.5f);
-            button.GetComponent<RectTransform>().anchoredPosition = new Vector2(125, 0);
+            button.GetComponent<RectTransform>().anchoredPosition = new Vector2(125, yOffset);
             button.GetComponent<AbilityButtonScript>().gm = gameObject;
             button.GetComponent<AbilityButtonScript>().map = gm.map;
             button.GetComponent<AbilityButtonScript>().myChar = selectedCharacter;
             button.GetComponent<AbilityButtonScript>().script = ability;
+            yOffset -= 60;
             button.GetComponent<Button>().onClick.AddListener(() => { abilityClicked(ability, selectedCharacter, map); });
 
         }
