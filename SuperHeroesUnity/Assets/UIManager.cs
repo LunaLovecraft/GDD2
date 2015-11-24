@@ -95,12 +95,14 @@ public class UIManager : MonoBehaviour {
                 {
                     GameObject character = Instantiate(Resources.Load("Character")) as GameObject;
                     character.GetComponent<CharacterSpriteScript>().moveTo(x, y);
+                    character.GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("CharacterSprites/" + map.map[y, x].myCharacter.Name);
                     if (map.map[y, x].myCharacter.Faction == 0)
                     {
                         character.GetComponent<CharacterSpriteScript>().X = x;
                         character.GetComponent<CharacterSpriteScript>().Y = y;
-                        character.GetComponent<SpriteRenderer>().color = Color.green;
-                    } else character.GetComponent<SpriteRenderer>().color = Color.red;
+                        character.GetComponent<SpriteRenderer>().color = new Color(0.75f,0.75f,1.0f,1.0f);
+                    }
+                    else character.GetComponent<SpriteRenderer>().color = new Color(1.0f, 0.75f, 0.75f, 1.0f);
                     SelectCharacter(map.map[y, x].myCharacter);
                     CharacterUI.Add(character);
          
