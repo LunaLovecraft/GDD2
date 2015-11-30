@@ -18,7 +18,7 @@ public class CharacterSpriteScript : MonoBehaviour {
 
     public void moveTo(int x, int y)
     {
-        gameObject.transform.position = new Vector3(x - 5, y - 4.5f, -0.5f);
+        gameObject.transform.position = new Vector3(x - 3.0f, y - 4.5f, -0.5f);
         X = x;
         Y = y;
     }

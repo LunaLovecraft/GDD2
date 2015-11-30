@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine.UI;
+using System.Text.RegularExpressions;
 
 enum UIState
 {
@@ -30,11 +31,13 @@ public class UIManager : MonoBehaviour {
     public Button abilityButton;
     Character selectedCharacter;
     public GameObject HoverTile;
+    public GameObject AbilityPanel;
     public Text CharName;
     public Text CharHealth;
     public Text CharMove;
-    public Text AbilityName;
-    public Text AbilityDescription;
+
+    public GameObject indicator;
+
     Ability selectedAbility;
 
 
@@ -69,7 +72,7 @@ public class UIManager : MonoBehaviour {
             for (int x = 0; x < map.Width; x++)
             {
                 GameObject tempTile = Instantiate(Resources.Load("tile")) as GameObject;
-                tempTile.transform.position = new Vector3(x - 5, y - 4.5f, 0);
+                tempTile.transform.position = new Vector3(x - 3.0f, y - 4.5f, 0);
                 tempTile.GetComponent<TileScript>().x = x;
                 tempTile.GetComponent<TileScript>().y = y;
                 TerrainHeight tileHeight = map.map[y, x].height;
@@ -94,16 +97,21 @@ public class UIManager : MonoBehaviour {
                 if (map.map[y, x].myCharacter != null)
                 {
                     GameObject character = Instantiate(Resources.Load("Character")) as GameObject;
+                    character.name = map.map[y, x].myCharacter.Name;
                     character.GetComponent<CharacterSpriteScript>().moveTo(x, y);
                     character.GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("CharacterSprites/" + map.map[y, x].myCharacter.Name);
                     if (map.map[y, x].myCharacter.Faction == 0)
                     {
                         character.GetComponent<CharacterSpriteScript>().X = x;
                         character.GetComponent<CharacterSpriteScript>().Y = y;
-                        character.GetComponent<SpriteRenderer>().color = new Color(0.75f,0.75f,1.0f,1.0f);
+                        SpriteRenderer charSprite = character.transform.FindChild("CharacterOutline").GetComponent<SpriteRenderer>();
+                        charSprite.color = Color.blue;
+                        charSprite.sprite = Resources.Load<Sprite>("CharacterOutlines/" + map.map[y, x].myCharacter.Name + "_OUTLINE");
                     }
-                    else character.GetComponent<SpriteRenderer>().color = new Color(1.0f, 0.75f, 0.75f, 1.0f);
-                    SelectCharacter(map.map[y, x].myCharacter);
+                    else
+                    {
+                        character.transform.FindChild("CharacterOutline").GetComponent<SpriteRenderer>().color = Color.red;
+                    }
                     CharacterUI.Add(character);
          
                 }
@@ -116,10 +124,82 @@ public class UIManager : MonoBehaviour {
 
     public void SelectCharacter(Character newSelection)
     {
+
+        if (newSelection.canAct)
+        {
+            foreach(GameObject character in CharacterUI)
+            {
+                if(character.GetComponent<CharacterSpriteScript>().X == newSelection.X && character.GetComponent<CharacterSpriteScript>().Y == newSelection.Y)
+                {
+                    indicator.transform.SetParent(character.transform, false);
+                    indicator.GetComponent<SpriteRenderer>().color = character.transform.GetChild(0).GetComponent<SpriteRenderer>().color;
+                }
+            }
+
+            foreach (GameObject obj in HomeUI)
+            {
+                if (obj.GetComponent<Button>() != null)
+                {
+                    obj.GetComponent<Button>().interactable = true;
+                }
+            }
+        }
+        else
+        {
+            foreach (GameObject obj in HomeUI)
+            {
+                if (obj.GetComponent<Button>() != null)
+                {
+                    obj.GetComponent<Button>().interactable = false;
+                }
+            }
+        }
+
+        List<GameObject> unwanted = new List<GameObject>();
+        unwanted.AddRange(GameObject.FindGameObjectsWithTag("AbilityPanelUI"));
+
+        foreach(GameObject obj in unwanted)
+        {
+            Destroy(obj);
+        }
+        
         selectedCharacter = newSelection;
         CharName.text = selectedCharacter.Name;
         CharHealth.text = selectedCharacter.Health + " / " + selectedCharacter.MaxHealth;
         CharMove.text = selectedCharacter.Speed + " " + selectedCharacter.Movement;
+        GameObject CharPanel = GameObject.Find("CharacterInfoPanel");
+        if (newSelection.Faction == 0)
+        {
+            CharPanel.GetComponent<Image>().color = Color.blue;
+        }
+        else CharPanel.GetComponent<Image>().color = Color.red;
+
+
+        float yOffset = 0.0f;
+        Debug.Log(newSelection.Abilities.Count);
+        foreach(Ability ability in newSelection.Abilities)
+        {
+            GameObject abilityPanel = Instantiate(AbilityPanel);
+            abilityPanel.transform.SetParent(CurrentCanvas.transform, false);
+            abilityPanel.GetComponent<RectTransform>().anchoredPosition = new Vector3(334.0f, -yOffset);
+            yOffset += 150.0f;
+            List<string> abilityText = new List<string>();
+            string name = ability.Method.Name;
+            abilityText.Add(name);
+            int abilityRange = (int)Abilities.GetAbilityInfo(ability.Method.Name, AbilityInfo.Range);
+            string abilityDescription = Abilities.GetAbilityInfo(ability.Method.Name, AbilityInfo.Description) as string;
+            abilityText.Add("Range: " + abilityRange + "\n" + abilityDescription);
+            for(int i = 0; i < abilityPanel.transform.childCount; i++)
+            {
+                abilityPanel.transform.GetChild(i).gameObject.GetComponent<Text>().text = abilityText[i];
+            }
+        }
+
+        
+
+        //AbilityName.text = selectedAbility.Method.Name;
+        //AbilityDescription.text = "Range: " + Abilities.GetAbilityInfo(selectedAbility.Method.Name, AbilityInfo.Range) as string + "\nDescription: " +
+        //Abilities.GetAbilityInfo(selectedAbility.Method.Name, AbilityInfo.Description) as string;
     }
 
     public void TileHovered(int x, int y)
@@ -225,9 +305,10 @@ public class UIManager : MonoBehaviour {
         }
         else if(currentState == UIState.Default)
         {
-            if(map.map[y, x].myCharacter != selectedCharacter)
+            if(map.map[y, x].myCharacter != selectedCharacter && map.map[y, x].myCharacter != null)
             {
                 SelectCharacter(map.map[y, x].myCharacter);
+
             }
         }
         
@@ -331,30 +412,39 @@ public class UIManager : MonoBehaviour {
         unwanted.AddRange(PlanningUI);
         foreach(GameObject obj in unwanted)
         {
-            obj.SetActive(false);
+            if(obj.GetComponent<Button>()!= null)
+            obj.GetComponent<Button>().interactable = false;
         }
         foreach(GameObject obj in HomeUI)
         {
-            obj.SetActive(true);
+            if (obj.GetComponent<Button>() != null)
+            obj.GetComponent<Button>().interactable = true;
         }
         
     }
 
     void drawSelectingUI()
     {
+        List<GameObject> unwanted = new List<GameObject>();
+        unwanted.AddRange(GameObject.FindGameObjectsWithTag("Abilities"));
+        foreach (GameObject obj in unwanted)
+        {
+            if (obj.GetComponent<Button>() != null)
+                obj.GetComponent<Button>().interactable = false;
+        }
+
         List<GameObject> planUI = new List<GameObject>();
         planUI.AddRange(PlanningUI);
         foreach (GameObject obj in planUI)
         {
-            obj.SetActive(true);
+            if (obj.GetComponent<Button>() != null)
+                obj.GetComponent<Button>().interactable = true;
         }
 
         if(UIInformationHandler.InformationStack.Count > 0)
         {
             UIInformation tempInfo = UIInformationHandler.InformationStack.Peek();
-            AbilityName.text = selectedAbility.Method.Name;
-            AbilityDescription.text = "Range: " +  Abilities.GetAbilityInfo(selectedAbility.Method.Name, AbilityInfo.Range) as string + "\nDescription: " +
-            Abilities.GetAbilityInfo(selectedAbility.Method.Name, AbilityInfo.Description) as string;
+            
             foreach(List<Node> list in tempInfo.options)
             {
                 foreach(Node tile in list)
@@ -372,14 +462,16 @@ public class UIManager : MonoBehaviour {
         unwanted.AddRange(HomeUI);
         foreach (GameObject obj in unwanted)
         {
-            obj.SetActive(false);
+            if (obj.GetComponent<Button>() != null)
+            obj.GetComponent<Button>().interactable = false;
         }
         List<GameObject> moveUI = new List<GameObject>();
         moveUI.AddRange(MoveUI);
         moveUI.AddRange(BackUI);
         foreach (GameObject obj in moveUI)
         {
-            obj.SetActive(true);
+            if (obj.GetComponent<Button>() != null)
+            obj.GetComponent<Button>().interactable = true;
         }
         Moves = map.map[selectedCharacter.Y, selectedCharacter.X].FindPossibleMoves((int)selectedCharacter.Movement, selectedCharacter.Speed ,null, null, true, selectedCharacter.Faction);
 
@@ -403,14 +495,16 @@ public class UIManager : MonoBehaviour {
         unwanted.AddRange(PlanningUI);
         foreach (GameObject obj in unwanted)
         {
-            obj.SetActive(false);
+            if (obj.GetComponent<Button>() != null)
+            obj.GetComponent<Button>().interactable = false;
         }
         List<GameObject> attackUI = new List<GameObject>();
         attackUI.AddRange(AttackUI);
         attackUI.AddRange(BackUI);
         foreach (GameObject obj in attackUI)
         {
-            obj.SetActive(true);
+            if (obj.GetComponent<Button>() != null)
+            obj.GetComponent<Button>().interactable = true;
         }
         
         List<GameObject> AbilityButtons = new List<GameObject>();
@@ -428,7 +522,7 @@ public class UIManager : MonoBehaviour {
             button.GetComponent<AbilityButtonScript>().map = gm.map;
             button.GetComponent<AbilityButtonScript>().myChar = selectedCharacter;
             button.GetComponent<AbilityButtonScript>().script = ability;
-            yOffset -= 60;
+            yOffset -= 150;
             button.GetComponent<Button>().onClick.AddListener(() => { abilityClicked(button.GetComponent<AbilityButtonScript>().script, selectedCharacter, map); });
 
         }
@@ -448,6 +542,5 @@ public class UIManager : MonoBehaviour {
 
 	// Update is called once per frame
 	void Update () {
-        
 	}
 }
