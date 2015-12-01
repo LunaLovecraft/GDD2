@@ -67,10 +67,17 @@ public class GameManager : MonoBehaviour {
         Debug.Log(myChar.Name);
         Debug.Log(myChar.Health);
         
-
+        
         gameObject.GetComponent<UIManager>().InitMap();
 
         TurnManager.Initialize(factions);
+
+        foreach(Character character in Characters)
+        {
+            character.OnDamaged += new EventHandler(gameObject.GetComponent<UIManager>().ShowDamage);
+            character.OnHealed += new EventHandler(gameObject.GetComponent<UIManager>().ShowHeal);
+        }
+
         Debug.Log("Map in start: " + map);
 	}
 	

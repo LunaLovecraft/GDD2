@@ -1,8 +1,8 @@
 ﻿using UnityEngine;
 using System.Collections;
+using System;
 using System.Collections.Generic;
 using UnityEngine.UI;
-using System.Text.RegularExpressions;
 
 enum UIState
 {
@@ -15,6 +15,7 @@ enum UIState
 public class UIManager : MonoBehaviour {
     
     GameManager gm;
+    public GameObject HPChangeText;
     UIState currentState;
     public GameObject CurrentCanvas;
     Stack History = new Stack();
@@ -120,6 +121,38 @@ public class UIManager : MonoBehaviour {
 
         currentState = UIState.Default;
         UIUpdate();
+    }
+
+    public void ShowDamage(object sender, EventArgs e)
+    {
+        DamageEventArgs data = (DamageEventArgs)e;
+        GameObject damageText = Instantiate(HPChangeText);
+        damageText.GetComponent<Text>().text = data.damage.ToString();
+        damageText.GetComponent<Text>().color = Color.red;
+        RectTransform CanvasRect = CurrentCanvas.GetComponent<RectTransform>();
+        Vector2 ViewportPosition = Camera.main.WorldToViewportPoint(Tiles[data.myChar.Y, data.myChar.X].transform.position);
+        Vector2 WorldObject_ScreenPosition = new Vector2( ((ViewportPosition.x * CanvasRect.sizeDelta.x) - (CanvasRect.sizeDelta.x * 0.5f)),
+            ((ViewportPosition.y * CanvasRect.sizeDelta.y) - (CanvasRect.sizeDelta.y * 0.5f)));
+        damageText.GetComponent<RectTransform>().anchoredPosition = WorldObject_ScreenPosition;
+        damageText.transform.SetParent(CurrentCanvas.transform, false);
+        Destroy(damageText, 2.5f);
+        
+    }
+
+    public void ShowHeal(object sender, EventArgs e)
+    {
+        HealEventArgs data = (HealEventArgs)e;
+        GameObject damageText = Instantiate(HPChangeText);
+        damageText.GetComponent<Text>().text = data.heal.ToString();
+        damageText.GetComponent<Text>().color = Color.green;
+        RectTransform CanvasRect = CurrentCanvas.GetComponent<RectTransform>();
+        Vector2 ViewportPosition = Camera.main.WorldToViewportPoint(Tiles[data.myChar.Y, data.myChar.X].transform.position);
+        Vector2 WorldObject_ScreenPosition = new Vector2(((ViewportPosition.x * CanvasRect.sizeDelta.x) - (CanvasRect.sizeDelta.x * 0.5f)),
+            ((ViewportPosition.y * CanvasRect.sizeDelta.y) - (CanvasRect.sizeDelta.y * 0.5f)));
+        damageText.GetComponent<RectTransform>().anchoredPosition = WorldObject_ScreenPosition;
+        damageText.transform.SetParent(CurrentCanvas.transform, false);
+        Destroy(damageText, 2.5f);
+        
     }
 
     public void SelectCharacter(Character newSelection)
