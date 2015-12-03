@@ -50,6 +50,7 @@ public partial class Character{
     private MovementType movement;
     private Dictionary<Condition, int> myConditions;
     private List<Character> characterList;
+    private List<string> traitNames;
     public bool canAct;
     public bool canMove;
 
@@ -64,6 +65,7 @@ public partial class Character{
     public int Speed { get { return speed; } }
     public MovementType Movement { get { return movement; } }
     public int Faction { get { return faction; } }
+    public List<string> TraitNames { get { return traitNames; } }
 
     public List<Ability> Abilities { get { return myAbilities; } }
     public int MaxHealth { get { return maxHealth; } }
@@ -91,6 +93,7 @@ public partial class Character{
         this.faction = 0;
         this.characterList = null;
         this.canAct = false;
+        this.traitNames = new List<string>();
         
     }
 
@@ -129,12 +132,17 @@ public partial class Character{
         this.characterList.Add(this);
         this.canMove = false;
         this.canAct = false;
+        this.traitNames = new List<string>();
 
         // Add all the traits to the character's event handlers
         List<Trait> myTraits = myData.traits;
+        string traitName;
         for (int i = 0; i < myTraits.Count; ++i)
         {
             myTraits[i](this);
+            traitName = myTraits[i].Method.Name;
+            traitName = traitName.Remove(0, 5);
+            traitNames.Add(traitName);
         }
 
         // Call Spawn event.

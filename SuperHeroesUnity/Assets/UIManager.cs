@@ -36,6 +36,7 @@ public class UIManager : MonoBehaviour {
     public Text CharName;
     public Text CharHealth;
     public Text CharMove;
+    public Text CharTraits;
 
     public GameObject indicator;
 
@@ -200,6 +201,12 @@ public class UIManager : MonoBehaviour {
         CharName.text = selectedCharacter.Name;
         CharHealth.text = selectedCharacter.Health + " / " + selectedCharacter.MaxHealth;
         CharMove.text = selectedCharacter.Speed + " " + selectedCharacter.Movement;
+        string traits = "";
+        foreach(string trait in selectedCharacter.TraitNames)
+        {
+            traits += trait + " ";
+        }
+        CharTraits.text = traits;
         GameObject CharPanel = GameObject.Find("CharacterInfoPanel");
         if (newSelection.Faction == 0)
         {
