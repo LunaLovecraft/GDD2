@@ -374,6 +374,14 @@ public class UIManager : MonoBehaviour {
                 History.Push(currentState);
                 currentState = UIState.Attacking;
                 break;
+            case "Standby": // Standby button is pressed
+
+                // The selected character can no longer act during the turn
+                // The next character is then selected
+
+                selectedCharacter.canAct = false;
+                FindNextCharacter();
+                break;
             case "Back":
                 CleanMap();
 
@@ -384,6 +392,43 @@ public class UIManager : MonoBehaviour {
                 break;
         }
         UIUpdate();
+    }
+
+    /// <summary>
+    /// Selects the next character.
+    /// If there is no remain characters, it ends the turn
+    /// </summary>
+    void FindNextCharacter()
+    {
+        Debug.Log("Selecting next character:");
+
+        CleanMap();
+        currentState = UIState.Default;
+        UIUpdate();
+        History.Clear();
+
+        // Finds next character that can act.
+        Character nextChar = null;
+        for (int i = 0; i < gm.Factions[TurnManager.currentFactionTurn].Units.Count; ++i)
+        {
+            if ((gm.Factions[TurnManager.currentFactionTurn].Units[i]).canAct)
+            {
+                nextChar = gm.Factions[TurnManager.currentFactionTurn].Units[i];
+                break;
+            }
+        }
+
+        // Ends the turn if there is no new character.
+        if (nextChar == null)
+        {
+            Debug.Log("No character found. Ending turn.");
+            TurnManager.currentState = TurnState.TurnEnd;
+        }
+        else   // Selects the next character if there is one.
+        {
+            SelectCharacter(nextChar);
+        }
+
     }
 
     void CleanMap()
