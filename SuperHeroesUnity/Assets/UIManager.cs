@@ -37,6 +37,7 @@ public class UIManager : MonoBehaviour {
     public Text CharHealth;
     public Text CharMove;
     public Text CharTraits;
+    public Text ToolkitText;
 
     public GameObject indicator;
 
@@ -392,6 +393,11 @@ public class UIManager : MonoBehaviour {
                 break;
         }
         UIUpdate();
+    }
+
+    public void SetToolkitText(string message)
+    {
+        ToolkitText.text = "Tool Tip: " + message;
     }
 
     /// <summary>
