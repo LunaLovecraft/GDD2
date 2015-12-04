@@ -37,6 +37,8 @@ public class UIManager : MonoBehaviour {
     public Text CharHealth;
     public Text CharMove;
     public Text CharTraits;
+    Vector2 GlobalAnchor = new Vector2(0.0f, 0.5f);
+
 
     public GameObject indicator;
 
@@ -156,6 +158,38 @@ public class UIManager : MonoBehaviour {
         
     }
 
+    void positionAnchors()
+    {
+        List<GameObject> elements = new List<GameObject>();
+        elements.AddRange(BackUI);
+        elements.AddRange(AttackUI);
+        elements.AddRange(HomeUI);
+        elements.AddRange(MoveUI);
+        elements.AddRange(PlanningUI);
+        elements.AddRange(GameObject.FindGameObjectsWithTag("AbilityPanelUI"));
+
+        foreach(GameObject obj in elements)
+        {
+            if(obj.GetComponent<RectTransform>() != null)
+            {
+                Vector3 savePos = obj.GetComponent<RectTransform>().anchoredPosition3D;
+                if (selectedCharacter.Faction == 0)
+                {
+                    GlobalAnchor = new Vector2(1.0f, 0.5f);
+                    obj.GetComponent<RectTransform>().anchorMax = GlobalAnchor;
+                    obj.GetComponent<RectTransform>().anchorMin = GlobalAnchor;
+                }
+                else
+                {
+                    GlobalAnchor = new Vector2(0.0f, 0.5f);
+                    obj.GetComponent<RectTransform>().anchorMax = GlobalAnchor;
+                    obj.GetComponent<RectTransform>().anchorMin = GlobalAnchor;
+                }
+                obj.GetComponent<RectTransform>().anchoredPosition3D = new Vector3(-savePos.x, savePos.y, savePos.z);
+            }
+        }
+    }
+
     public void SelectCharacter(Character newSelection)
     {
 
@@ -221,7 +255,16 @@ public class UIManager : MonoBehaviour {
         {
             GameObject abilityPanel = Instantiate(AbilityPanel);
             abilityPanel.transform.SetParent(CurrentCanvas.transform, false);
-            abilityPanel.GetComponent<RectTransform>().anchoredPosition = new Vector3(334.0f, -yOffset);
+            abilityPanel.GetComponent<RectTransform>().anchorMin = GlobalAnchor;
+            abilityPanel.GetComponent<RectTransform>().anchorMax = GlobalAnchor;
+            if(selectedCharacter.Faction == 0)
+            { 
+                abilityPanel.GetComponent<RectTransform>().anchoredPosition = new Vector3(334.0f, -yOffset);
+            }
+            else
+            {
+                abilityPanel.GetComponent<RectTransform>().anchoredPosition = new Vector3(-334.0f, -yOffset);
+            }
             yOffset += 150.0f;
             List<string> abilityText = new List<string>();
             string name = ability.Method.Name;
@@ -235,7 +278,6 @@ public class UIManager : MonoBehaviour {
             }
         }
 
-        
 
         //AbilityName.text = selectedAbility.Method.Name;
         //AbilityDescription.text = "Range: " + Abilities.GetAbilityInfo(selectedAbility.Method.Name, AbilityInfo.Range) as string + "\nDescription: " +
@@ -336,6 +378,7 @@ public class UIManager : MonoBehaviour {
                 if (nextChar == null)
                 {
                     TurnManager.currentState = TurnState.TurnEnd;
+                    positionAnchors();
                 }
                 else
                 {
@@ -555,9 +598,17 @@ public class UIManager : MonoBehaviour {
             button.transform.SetParent(CurrentCanvas.transform, false);
             button.GetComponentInChildren<Text>().text = ability.Method.Name;
             button.transform.localPosition = new Vector3(0, 0, 0);
-            button.GetComponent<RectTransform>().anchorMax = new Vector2(0.0f, 0.5f);
-            button.GetComponent<RectTransform>().anchorMin = new Vector2(0.0f, 0.5f);
-            button.GetComponent<RectTransform>().anchoredPosition = new Vector2(125, yOffset);
+            button.GetComponent<RectTransform>().anchorMax = GlobalAnchor;
+            button.GetComponent<RectTransform>().anchorMin = GlobalAnchor;
+            
+            if(selectedCharacter.Faction == 0)
+            {
+                button.GetComponent<RectTransform>().anchoredPosition = new Vector2(125, yOffset);
+            }
+            else
+            {
+                button.GetComponent<RectTransform>().anchoredPosition = new Vector2(-125, yOffset);
+            }
             button.GetComponent<AbilityButtonScript>().gm = gameObject;
             button.GetComponent<AbilityButtonScript>().map = gm.map;
             button.GetComponent<AbilityButtonScript>().myChar = selectedCharacter;
