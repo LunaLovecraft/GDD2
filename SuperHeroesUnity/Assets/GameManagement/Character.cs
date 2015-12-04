@@ -161,10 +161,18 @@ public partial class Character{
         DamageEventArgs e = new DamageEventArgs(this, type, damage);
         E_Damaged(e);
         this.health -= e.damage;
+		if (e.damage > 0) {
+			MessageLog.Log(name + " was hit for " + damage + " damage");
+		} else if (e.damage < 0) {
+			MessageLog.Log(name + " was healed for " + (-damage) + " health by the attack!");
+		} else {
+			MessageLog.Log(name + " was unaffected by the attack...");
+		}
 
         // If health is below zero, call the dead event.
         if (health <= 0)
         {
+			MessageLog(name + " died.");
             E_Killed(new CharEventArgs(this));
         }
         else if (health > maxHealth)
@@ -198,9 +206,18 @@ public partial class Character{
 
         this.health += e.heal;
 
+		if (e.heal > 0) {
+			MessageLog.Log(name + " was healed for " + e.heal + " health.");
+		} else if (e.heal < 0) {
+			MessageLog.Log(name + " was hurt instead, and took " + (-e.heal) + " damage!");
+		} else {
+			MessageLog.Log(name + " wasn't healed...");
+		}
+
         // If health is below zero, call the dead event.
         if (health <= 0)
         {
+			MessageLog(name + " died.");
             E_Killed(new CharEventArgs(this));
         }
         else if (health > maxHealth)
