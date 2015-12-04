@@ -21,6 +21,7 @@ public class GameManager : MonoBehaviour {
 
 	// Use this for initialization
 	void Start () {
+		MessageLog.Initialize ();
         CharacterInfoList.Initialize();
 
 	    map = new GridHandler(10, 10);
