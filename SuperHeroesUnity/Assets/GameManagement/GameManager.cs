@@ -13,6 +13,7 @@ public class GameManager : MonoBehaviour {
 
     private List<Faction> factions = new List<Faction>();
     public List<Faction> Factions { get { return factions; } }
+	public GameObject toastTextPrefab;
 
     public List<Character> Characters = new List<Character>();
 
@@ -22,6 +23,7 @@ public class GameManager : MonoBehaviour {
 	// Use this for initialization
 	void Start () {
 		MessageLog.Initialize ();
+		Toast.Initialize (toastTextPrefab);
         CharacterInfoList.Initialize();
 
 	    map = new GridHandler(10, 10);
@@ -80,6 +82,7 @@ public class GameManager : MonoBehaviour {
         }
 
         Debug.Log("Map in start: " + map);
+		Toast.SendToast ("Game Start!");
 	}
 	
 	// Update is called once per frame
