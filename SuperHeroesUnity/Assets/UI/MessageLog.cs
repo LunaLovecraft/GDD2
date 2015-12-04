@@ -7,7 +7,7 @@ using System.Collections;
 public static class MessageLog {
 
 	// The maximum number of messages on the screen.
-	public const int MAX_MESSAGES = 5; 
+	public const int MAX_MESSAGES = 8; 
 
 	// The array of messages
 	private static string[] messages;
