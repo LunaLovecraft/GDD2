@@ -37,6 +37,7 @@ public class UIManager : MonoBehaviour {
     public Text CharHealth;
     public Text CharMove;
     public Text CharTraits;
+	public Image Portrait;
     Vector2 GlobalAnchor = new Vector2(0.0f, 0.5f);
     public Text ToolkitText;
     float StandbyButtonYPos;
@@ -47,6 +48,8 @@ public class UIManager : MonoBehaviour {
     public GameObject Message4;
     Text[] messages;
     Ability selectedAbility;
+
+
 
 
 	// Use this for initialization
@@ -69,6 +72,7 @@ public class UIManager : MonoBehaviour {
         PlanningUI.AddRange(GameObject.FindGameObjectsWithTag("PlanningUI"));
 
         CharTraits = GameObject.Find("TraitsText").GetComponent<Text>();
+		Portrait = GameObject.Find("Portrait").GetComponent<Image>();
 
         CharacterUI = new List<GameObject>();
         gm = gameObject.GetComponent<GameManager>();
@@ -173,7 +177,7 @@ public class UIManager : MonoBehaviour {
         elements.AddRange(HomeUI);
         elements.AddRange(MoveUI);
         elements.AddRange(PlanningUI);
-        //elements.AddRange(GameObject.FindGameObjectsWithTag("AbilityPanelUI"));
+        elements.AddRange(GameObject.FindGameObjectsWithTag("AbilityPanelUI"));
 
         foreach(GameObject obj in elements)
         {
@@ -182,13 +186,13 @@ public class UIManager : MonoBehaviour {
                 Vector3 savePos = obj.GetComponent<RectTransform>().anchoredPosition3D;
                 if (selectedCharacter.Faction == 0)
                 {
-                    GlobalAnchor = new Vector2(1.0f, 0.5f);
+                    GlobalAnchor = new Vector2(1.0f, 1.0f);
                     obj.GetComponent<RectTransform>().anchorMax = GlobalAnchor;
                     obj.GetComponent<RectTransform>().anchorMin = GlobalAnchor;
                 }
                 else
                 {
-                    GlobalAnchor = new Vector2(0.0f, 0.5f);
+                    GlobalAnchor = new Vector2(0.0f, 1.0f);
                     obj.GetComponent<RectTransform>().anchorMax = GlobalAnchor;
                     obj.GetComponent<RectTransform>().anchorMin = GlobalAnchor;
                 }
@@ -248,7 +252,7 @@ public class UIManager : MonoBehaviour {
         }
 
         List<GameObject> unwanted = new List<GameObject>();
-       // unwanted.AddRange(GameObject.FindGameObjectsWithTag("AbilityPanelUI"));
+        unwanted.AddRange(GameObject.FindGameObjectsWithTag("AbilityPanelUI"));
 
         foreach(GameObject obj in unwanted)
         {
@@ -267,30 +271,35 @@ public class UIManager : MonoBehaviour {
         CharTraits.text = traits;
         GameObject CharPanel = GameObject.Find("CharacterInfoPanel");
         Debug.Log(CharPanel);
-        if (newSelection.Faction == 0)
-        {
-            CharPanel.GetComponent<Image>().color = Color.blue;
-        }
-        else CharPanel.GetComponent<Image>().color = Color.red;
+		Portrait.sprite = Resources.Load<Sprite>("CharacterSprites/" + selectedCharacter.Name);
+        //if (newSelection.Faction == 0)
+        //{
+            //CharPanel.GetComponent<Image>().color = Color.blue;
+        //}
+        //else CharPanel.GetComponent<Image>().color = Color.red;
 
 
-        float yOffset = StandbyButtonYPos;
+        float yOffset = 445;
         Debug.Log(newSelection.Abilities.Count);
-        /*foreach(Ability ability in newSelection.Abilities)
+        foreach(Ability ability in newSelection.Abilities)
         {
             GameObject abilityPanel = Instantiate(AbilityPanel);
             abilityPanel.transform.SetParent(CurrentCanvas.transform, false);
-            abilityPanel.GetComponent<RectTransform>().anchorMin = GlobalAnchor;
-            abilityPanel.GetComponent<RectTransform>().anchorMax = GlobalAnchor;
             if(selectedCharacter.Faction == 0)
             { 
-                abilityPanel.GetComponent<RectTransform>().anchoredPosition = new Vector3(334.0f, -yOffset);
+				GlobalAnchor = new Vector2(0.0f, 1.0f);
+				abilityPanel.GetComponent<RectTransform>().anchorMin = GlobalAnchor;
+				abilityPanel.GetComponent<RectTransform>().anchorMax = GlobalAnchor;
+                abilityPanel.GetComponent<RectTransform>().anchoredPosition = new Vector3(105, -yOffset);
             }
             else
             {
-                abilityPanel.GetComponent<RectTransform>().anchoredPosition = new Vector3(-334.0f, -yOffset);
+				GlobalAnchor = new Vector2(1.0f, 1.0f);
+				abilityPanel.GetComponent<RectTransform>().anchorMin = GlobalAnchor;
+				abilityPanel.GetComponent<RectTransform>().anchorMax = GlobalAnchor;
+                abilityPanel.GetComponent<RectTransform>().anchoredPosition = new Vector3(-105, -yOffset);
             }
-            yOffset += 150.0f;
+            yOffset += 140.0f;
             List<string> abilityText = new List<string>();
             string name = ability.Method.Name;
             abilityText.Add(name);
@@ -301,12 +310,12 @@ public class UIManager : MonoBehaviour {
             {
                 abilityPanel.transform.GetChild(i).gameObject.GetComponent<Text>().text = abilityText[i];
             }
-        }*/
+        }
 
 
         //AbilityName.text = selectedAbility.Method.Name;
         //AbilityDescription.text = "Range: " + Abilities.GetAbilityInfo(selectedAbility.Method.Name, AbilityInfo.Range) as string + "\nDescription: " +
-        //Abilities.GetAbilityInfo(selectedAbility.Method.Name, AbilityInfo.Description) as string;
+       // Abilities.GetAbilityInfo(selectedAbility.Method.Name, AbilityInfo.Description) as string;
     }
 
     public void TileHovered(int x, int y)
@@ -693,29 +702,32 @@ public class UIManager : MonoBehaviour {
         }
         
         List<GameObject> AbilityButtons = new List<GameObject>();
-        float yOffset = StandbyButtonYPos - 120;
+        float yOffset = StandbyButtonYPos - 200;
         foreach(Ability ability in selectedCharacter.MyAbilities)
         {
             Button button = Instantiate(abilityButton);
             button.transform.SetParent(CurrentCanvas.transform, false);
             button.GetComponentInChildren<Text>().text = ability.Method.Name;
             button.transform.localPosition = new Vector3(0, 0, 0);
-            button.GetComponent<RectTransform>().anchorMax = GlobalAnchor;
-            button.GetComponent<RectTransform>().anchorMin = GlobalAnchor;
+
             
             if(selectedCharacter.Faction == 0)
-            {
-                button.GetComponent<RectTransform>().anchoredPosition = new Vector2(125, yOffset);
+			{
+				button.GetComponent<RectTransform>().anchorMax = new Vector2(0f, 1.0f);
+				button.GetComponent<RectTransform>().anchorMin = new Vector2(0f, 1.0f);
+				button.GetComponent<RectTransform>().anchoredPosition = new Vector2(328, yOffset);
             }
             else
             {
-                button.GetComponent<RectTransform>().anchoredPosition = new Vector2(-125, yOffset);
+				button.GetComponent<RectTransform>().anchorMax = new Vector2(1.0f, 1.0f);
+				button.GetComponent<RectTransform>().anchorMin = new Vector2(1.0f, 1.0f);
+				button.GetComponent<RectTransform>().anchoredPosition = new Vector2(-328, yOffset);
             }
             button.GetComponent<AbilityButtonScript>().gm = gameObject;
             button.GetComponent<AbilityButtonScript>().map = gm.map;
             button.GetComponent<AbilityButtonScript>().myChar = selectedCharacter;
             button.GetComponent<AbilityButtonScript>().script = ability;
-            yOffset -= 60;
+            yOffset -= 150;
             button.GetComponent<Button>().onClick.AddListener(() => { abilityClicked(button.GetComponent<AbilityButtonScript>().script, selectedCharacter, map); });
 
         }
@@ -738,10 +750,10 @@ public class UIManager : MonoBehaviour {
 	void Update () {
         for(int i = 0; i < MessageLog.Messages.Length; i++)
         {
-            if(messages[i].text != MessageLog.Messages[i])
-            {
-                messages[i].text = MessageLog.Messages[i];
-            }
+            //if(messages[i].text != MessageLog.Messages[i])
+           // {
+              //  messages[i].text = MessageLog.Messages[i];
+            //}
         }
 	}
 }
