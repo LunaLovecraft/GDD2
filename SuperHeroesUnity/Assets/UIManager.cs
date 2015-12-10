@@ -37,13 +37,9 @@ public class UIManager : MonoBehaviour {
     public Text CharHealth;
     public Text CharMove;
     public Text CharTraits;
-<<<<<<< HEAD
     Vector2 GlobalAnchor = new Vector2(0.0f, 0.5f);
-
-=======
     public Text ToolkitText;
->>>>>>> origin/Michael's_UI
-
+    float StandbyButtonYPos;
     public GameObject indicator;
 
     Ability selectedAbility;
@@ -76,7 +72,7 @@ public class UIManager : MonoBehaviour {
         map = gm.map;
         Tiles = new GameObject[map.Height,map.Width];
 
-
+        StandbyButtonYPos = GameObject.Find("StandbyButton").GetComponent<RectTransform>().anchoredPosition.y;
         for (int y = 0; y < map.Height; y++)
         {
             for (int x = 0; x < map.Width; x++)
@@ -194,6 +190,15 @@ public class UIManager : MonoBehaviour {
                 obj.GetComponent<RectTransform>().anchoredPosition3D = new Vector3(-savePos.x, savePos.y, savePos.z);
             }
         }
+
+        RectTransform toolTipRect = ToolkitText.transform.parent.gameObject.GetComponent<RectTransform>();
+
+        Vector3 pos = toolTipRect.anchoredPosition3D;
+        toolTipRect.anchorMax = new Vector2(GlobalAnchor.x, 0.0f);
+        toolTipRect.anchorMin = new Vector2(GlobalAnchor.x, 0.0f);
+        toolTipRect.anchoredPosition3D = new Vector3(-pos.x, pos.y, pos.z);
+            
+        
     }
 
     public void SelectCharacter(Character newSelection)
@@ -257,7 +262,7 @@ public class UIManager : MonoBehaviour {
         else CharPanel.GetComponent<Image>().color = Color.red;
 
 
-        float yOffset = 0.0f;
+        float yOffset = StandbyButtonYPos;
         Debug.Log(newSelection.Abilities.Count);
         foreach(Ability ability in newSelection.Abilities)
         {
@@ -448,6 +453,11 @@ public class UIManager : MonoBehaviour {
                 CleanMap();
 
                 currentState = (UIState) History.Pop();
+                break;
+            case "Hold":
+                CleanMap();
+                currentState = UIState.Default;
+                UIUpdate();
                 break;
             default:
                 currentState = UIState.Default;
@@ -663,7 +673,7 @@ public class UIManager : MonoBehaviour {
         }
         
         List<GameObject> AbilityButtons = new List<GameObject>();
-        float yOffset = 0.0f;
+        float yOffset = StandbyButtonYPos - 120;
         foreach(Ability ability in selectedCharacter.MyAbilities)
         {
             Button button = Instantiate(abilityButton);
@@ -685,7 +695,7 @@ public class UIManager : MonoBehaviour {
             button.GetComponent<AbilityButtonScript>().map = gm.map;
             button.GetComponent<AbilityButtonScript>().myChar = selectedCharacter;
             button.GetComponent<AbilityButtonScript>().script = ability;
-            yOffset -= 150;
+            yOffset -= 60;
             button.GetComponent<Button>().onClick.AddListener(() => { abilityClicked(button.GetComponent<AbilityButtonScript>().script, selectedCharacter, map); });
 
         }
