@@ -22,6 +22,6 @@ public class AbilityButtonScript : MonoBehaviour, IPointerEnterHandler
 
     public void OnPointerEnter(PointerEventData eventData)
     {
-        gm.GetComponent<UIManager>().SetToolkitText("Abillity: " + script.Method.Name + ": " + Abilities.GetAbilityInfo(script.Method.Name, AbilityInfo.Description));
+        gm.GetComponent<UIManager>().SetToolkitText("Abillity: " + script.Method.Name + ": " + Abilities.GetAbilityInfo(script.Method.Name, AbilityInfo.Description )+ "\nRange: " + Abilities.GetAbilityInfo(script.Method.Name, AbilityInfo.Range ));
     }
 }

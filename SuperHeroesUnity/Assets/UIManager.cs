@@ -168,7 +168,7 @@ public class UIManager : MonoBehaviour {
         elements.AddRange(HomeUI);
         elements.AddRange(MoveUI);
         elements.AddRange(PlanningUI);
-        elements.AddRange(GameObject.FindGameObjectsWithTag("AbilityPanelUI"));
+        //elements.AddRange(GameObject.FindGameObjectsWithTag("AbilityPanelUI"));
 
         foreach(GameObject obj in elements)
         {
@@ -236,7 +236,7 @@ public class UIManager : MonoBehaviour {
         }
 
         List<GameObject> unwanted = new List<GameObject>();
-        unwanted.AddRange(GameObject.FindGameObjectsWithTag("AbilityPanelUI"));
+       // unwanted.AddRange(GameObject.FindGameObjectsWithTag("AbilityPanelUI"));
 
         foreach(GameObject obj in unwanted)
         {
@@ -264,7 +264,7 @@ public class UIManager : MonoBehaviour {
 
         float yOffset = StandbyButtonYPos;
         Debug.Log(newSelection.Abilities.Count);
-        foreach(Ability ability in newSelection.Abilities)
+        /*foreach(Ability ability in newSelection.Abilities)
         {
             GameObject abilityPanel = Instantiate(AbilityPanel);
             abilityPanel.transform.SetParent(CurrentCanvas.transform, false);
@@ -289,7 +289,7 @@ public class UIManager : MonoBehaviour {
             {
                 abilityPanel.transform.GetChild(i).gameObject.GetComponent<Text>().text = abilityText[i];
             }
-        }
+        }*/
 
 
         //AbilityName.text = selectedAbility.Method.Name;
