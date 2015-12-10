@@ -499,6 +499,7 @@ public class UIManager : MonoBehaviour {
         if (nextChar == null)
         {
             Debug.Log("No character found. Ending turn.");
+            positionAnchors();
             TurnManager.currentState = TurnState.TurnEnd;
         }
         else   // Selects the next character if there is one.
@@ -656,7 +657,7 @@ public class UIManager : MonoBehaviour {
     {
         List<GameObject> unwanted = new List<GameObject>();
         unwanted.AddRange(MoveUI);
-        unwanted.AddRange(HomeUI);
+        
         unwanted.AddRange(PlanningUI);
         foreach (GameObject obj in unwanted)
         {
@@ -665,6 +666,7 @@ public class UIManager : MonoBehaviour {
         }
         List<GameObject> attackUI = new List<GameObject>();
         attackUI.AddRange(AttackUI);
+        attackUI.AddRange(HomeUI);
         attackUI.AddRange(BackUI);
         foreach (GameObject obj in attackUI)
         {
