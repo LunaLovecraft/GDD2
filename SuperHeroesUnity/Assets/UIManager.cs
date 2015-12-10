@@ -604,7 +604,7 @@ public class UIManager : MonoBehaviour {
     void drawSelectingUI()
     {
         List<GameObject> unwanted = new List<GameObject>();
-        //unwanted.AddRange(GameObject.FindGameObjectsWithTag("Abilities"));
+        
         foreach (GameObject obj in unwanted)
         {
             if (obj.GetComponent<Button>() != null)
@@ -635,8 +635,14 @@ public class UIManager : MonoBehaviour {
 
     void drawMovementUI()
     {
+        foreach (GameObject obj in GameObject.FindGameObjectsWithTag("Abilities"))
+        {
+            Destroy(obj);
+        }
+
         List<GameObject> unwanted = new List<GameObject>();
         unwanted.AddRange(AttackUI);
+        
         unwanted.AddRange(HomeUI);
         foreach (GameObject obj in unwanted)
         {
