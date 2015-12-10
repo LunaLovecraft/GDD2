@@ -41,7 +41,11 @@ public class UIManager : MonoBehaviour {
     public Text ToolkitText;
     float StandbyButtonYPos;
     public GameObject indicator;
-
+    public GameObject Message1;
+    public GameObject Message2;
+    public GameObject Message3;
+    public GameObject Message4;
+    Text[] messages;
     Ability selectedAbility;
 
 
@@ -126,6 +130,7 @@ public class UIManager : MonoBehaviour {
 
         currentState = UIState.Default;
         UIUpdate();
+        messages = new Text[] {Message1.GetComponent<Text>(), Message2.GetComponent<Text>(), Message3.GetComponent<Text>(), Message4.GetComponent<Text>()};
     }
 
     public void ShowDamage(object sender, EventArgs e)
@@ -191,9 +196,16 @@ public class UIManager : MonoBehaviour {
             }
         }
 
+        RectTransform CharPanel = CharTraits.transform.parent.gameObject.GetComponent<RectTransform>();
+        Vector3 pos = CharPanel.anchoredPosition3D;
+        CharPanel.anchorMax = new Vector2(GlobalAnchor.x, 1.0f);
+        CharPanel.anchorMin = new Vector2(GlobalAnchor.x, 1.0f);
+        CharPanel.anchoredPosition3D = new Vector3(-pos.x, pos.y, pos.z);
+
+
         RectTransform toolTipRect = ToolkitText.transform.parent.gameObject.GetComponent<RectTransform>();
 
-        Vector3 pos = toolTipRect.anchoredPosition3D;
+        pos = toolTipRect.anchoredPosition3D;
         toolTipRect.anchorMax = new Vector2(GlobalAnchor.x, 0.0f);
         toolTipRect.anchorMin = new Vector2(GlobalAnchor.x, 0.0f);
         toolTipRect.anchoredPosition3D = new Vector3(-pos.x, pos.y, pos.z);
@@ -718,5 +730,12 @@ public class UIManager : MonoBehaviour {
 
 	// Update is called once per frame
 	void Update () {
+        for(int i = 0; i < MessageLog.Messages.Length; i++)
+        {
+            if(messages[i].text != MessageLog.Messages[i])
+            {
+                messages[i].text = MessageLog.Messages[i];
+            }
+        }
 	}
 }
