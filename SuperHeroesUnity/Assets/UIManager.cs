@@ -63,7 +63,9 @@ public class UIManager : MonoBehaviour {
         HomeUI.AddRange(GameObject.FindGameObjectsWithTag("HomeUI"));
         MoveUI.AddRange(GameObject.FindGameObjectsWithTag("MoveUI"));
         PlanningUI.AddRange(GameObject.FindGameObjectsWithTag("PlanningUI"));
-        
+
+        CharTraits = GameObject.Find("TraitsText").GetComponent<Text>();
+
         CharacterUI = new List<GameObject>();
         gm = gameObject.GetComponent<GameManager>();
         
@@ -201,6 +203,7 @@ public class UIManager : MonoBehaviour {
                 {
                     indicator.transform.SetParent(character.transform, false);
                     indicator.GetComponent<SpriteRenderer>().color = character.transform.GetChild(0).GetComponent<SpriteRenderer>().color;
+                    
                 }
             }
 
@@ -242,6 +245,7 @@ public class UIManager : MonoBehaviour {
         }
         CharTraits.text = traits;
         GameObject CharPanel = GameObject.Find("CharacterInfoPanel");
+        Debug.Log(CharPanel);
         if (newSelection.Faction == 0)
         {
             CharPanel.GetComponent<Image>().color = Color.blue;
@@ -349,7 +353,15 @@ public class UIManager : MonoBehaviour {
                         }
                     }
 
-                    Moves = map.map[selectedCharacter.Y, selectedCharacter.X].FindPossibleMoves((int)selectedCharacter.Movement, selectedCharacter.Speed, null, null, true, selectedCharacter.Faction);
+                    Moves = map.map[selectedCharacter.Y, selectedCharacter.X].FindPossibleMoves((int)selectedCharacter.Movement, selectedCharacter.Speed - selectedCharacter.MovesThisTurn, null, null, true, selectedCharacter.Faction);
+
+                    if(selectedCharacter.Speed - selectedCharacter.MovesThisTurn == 0)
+                    {
+                        CleanMap();
+                        currentState = UIState.Default;
+                        selectedCharacter.canMove = false;
+                    }
+
                     UIUpdate();
                     break;
                 }
@@ -362,6 +374,9 @@ public class UIManager : MonoBehaviour {
             if(UIInformationHandler.InformationStack.Count == 0)
             {
                 CleanMap();
+                currentState = UIState.Attacking;
+                CleanMap();
+                History.Clear();
                 currentState = UIState.Default;
                 UIUpdate();
                 History.Clear();
@@ -431,7 +446,7 @@ public class UIManager : MonoBehaviour {
 
     void CleanMap()
     {
-        if (currentState == UIState.Attacking || currentState == UIState.Planning)
+        if (currentState == UIState.Attacking)
         {
             List<GameObject> toDelete = new List<GameObject>();
             toDelete.AddRange(GameObject.FindGameObjectsWithTag("Abilities"));
@@ -440,17 +455,17 @@ public class UIManager : MonoBehaviour {
             {
                 Destroy(btn);
             }
-            if (currentState == UIState.Planning)
+        }
+        else if (currentState == UIState.Planning)
+        {
+            foreach (Node tile in map.map)
             {
-                foreach (Node tile in map.map)
-                {
-                    Tiles[tile.Y, tile.X].GetComponent<SpriteRenderer>().color = Tiles[tile.Y, tile.X].GetComponent<TileScript>().baseColor;
-                }
+                Tiles[tile.Y, tile.X].GetComponent<SpriteRenderer>().color = Tiles[tile.Y, tile.X].GetComponent<TileScript>().baseColor;
             }
         }
         else if (currentState == UIState.Movement)
         {
-            foreach (Node node in Moves)
+            foreach (Node node in map.map)
             {
                 Tiles[node.Y, node.X].GetComponent<SpriteRenderer>().color = Tiles[node.Y, node.X].GetComponent<TileScript>().baseColor;
             }
@@ -500,8 +515,11 @@ public class UIManager : MonoBehaviour {
         }
         foreach(GameObject obj in HomeUI)
         {
+            
             if (obj.GetComponent<Button>() != null)
-            obj.GetComponent<Button>().interactable = true;
+            {
+                obj.GetComponent<Button>().interactable = true;
+            }
         }
         
     }
@@ -509,7 +527,7 @@ public class UIManager : MonoBehaviour {
     void drawSelectingUI()
     {
         List<GameObject> unwanted = new List<GameObject>();
-        unwanted.AddRange(GameObject.FindGameObjectsWithTag("Abilities"));
+        //unwanted.AddRange(GameObject.FindGameObjectsWithTag("Abilities"));
         foreach (GameObject obj in unwanted)
         {
             if (obj.GetComponent<Button>() != null)
@@ -556,7 +574,7 @@ public class UIManager : MonoBehaviour {
             if (obj.GetComponent<Button>() != null)
             obj.GetComponent<Button>().interactable = true;
         }
-        Moves = map.map[selectedCharacter.Y, selectedCharacter.X].FindPossibleMoves((int)selectedCharacter.Movement, selectedCharacter.Speed ,null, null, true, selectedCharacter.Faction);
+        Moves = map.map[selectedCharacter.Y, selectedCharacter.X].FindPossibleMoves((int)selectedCharacter.Movement, selectedCharacter.Speed - selectedCharacter.MovesThisTurn,null, null, true, selectedCharacter.Faction);
 
         foreach (Node node in map.map)
         {
@@ -625,6 +643,7 @@ public class UIManager : MonoBehaviour {
         script(myChar, map);
         History.Push(currentState);
         currentState = UIState.Planning;
+        CleanMap();
         selectedAbility = script;
         UIUpdate();
     }

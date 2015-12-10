@@ -47,6 +47,7 @@ public partial class Character{
     private int health;
     private int maxHealth;
     private int speed;
+    private int movesThisTurn;
     private MovementType movement;
     private Dictionary<Condition, int> myConditions;
     private List<Character> characterList;
@@ -63,6 +64,7 @@ public partial class Character{
     public string Name { get { return name; } }
     public int Health { get { return health; } }
     public int Speed { get { return speed; } }
+    public int MovesThisTurn { get { return movesThisTurn; } }
     public MovementType Movement { get { return movement; } }
     public int Faction { get { return faction; } }
     public List<string> TraitNames { get { return traitNames; } }
@@ -172,7 +174,7 @@ public partial class Character{
         // If health is below zero, call the dead event.
         if (health <= 0)
         {
-			MessageLog(name + " died.");
+			MessageLog.Log(name + " died.");
             E_Killed(new CharEventArgs(this));
         }
         else if (health > maxHealth)
@@ -217,7 +219,7 @@ public partial class Character{
         // If health is below zero, call the dead event.
         if (health <= 0)
         {
-			MessageLog(name + " died.");
+			MessageLog.Log(name + " died.");
             E_Killed(new CharEventArgs(this));
         }
         else if (health > maxHealth)
@@ -239,6 +241,7 @@ public partial class Character{
             return false;
         }
 
+        movesThisTurn += MyLocation.FindPathTo(map.map[y, x], map, Movement).Count;
         map.map[this.y, this.x].myCharacter = null;
         map.map[y, x].myCharacter = this;
         this.y = y;
@@ -308,6 +311,8 @@ public partial class Character{
     {
         // Called at the beginning of every turn.
         E_BeginTurn(new CharEventArgs(this));
+
+        movesThisTurn = 0;
 
         // Is the character dead?
         if(health <= 0){
