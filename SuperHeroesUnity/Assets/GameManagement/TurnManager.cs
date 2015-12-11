@@ -79,6 +79,12 @@ public static class TurnManager
         {
             currentFactionTurn = 0;
         }
+        Toast.SendToast("Turn Start!", GoToNextTurn);
+    }
+
+    private static void GoToNextTurn()
+    {
         currentState = TurnState.TurnStart;
+
     }
 }

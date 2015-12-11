@@ -39,8 +39,8 @@ public class ToastText : MonoBehaviour {
 					}
 				}
 				else{
-					this.transform.position = new Vector3(this.transform.position.x, this.transform.position.y + 0.02f, this.transform.position.z);
-					distanceMoved -= 0.02f;
+					this.transform.position = new Vector3(this.transform.position.x, this.transform.position.y + 0.04f, this.transform.position.z);
+					distanceMoved -= 0.04f;
 					if(distanceMoved <= 0.0f){
 						if(endOfLife != null){
 							endOfLife();
