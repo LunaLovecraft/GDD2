@@ -46,6 +46,10 @@ public class UIManager : MonoBehaviour {
     public GameObject Message2;
     public GameObject Message3;
     public GameObject Message4;
+    public GameObject Message5;
+    public GameObject Message6;
+    public GameObject Message7;
+    public GameObject Message8;
     Text[] messages;
     Ability selectedAbility;
 
@@ -134,7 +138,7 @@ public class UIManager : MonoBehaviour {
 
         currentState = UIState.Default;
         UIUpdate();
-        messages = new Text[] {Message1.GetComponent<Text>(), Message2.GetComponent<Text>(), Message3.GetComponent<Text>(), Message4.GetComponent<Text>()};
+        messages = new Text[] { Message1.GetComponent<Text>(), Message2.GetComponent<Text>(), Message3.GetComponent<Text>(), Message4.GetComponent<Text>(), Message5.GetComponent<Text>(), Message6.GetComponent<Text>(), Message7.GetComponent<Text>(), Message8.GetComponent<Text>() };
     }
 
     public void ShowDamage(object sender, EventArgs e)
@@ -750,10 +754,10 @@ public class UIManager : MonoBehaviour {
 	void Update () {
         for(int i = 0; i < MessageLog.Messages.Length; i++)
         {
-            //if(messages[i].text != MessageLog.Messages[i])
-           // {
-              //  messages[i].text = MessageLog.Messages[i];
-            //}
+            if(messages[i].text != MessageLog.Messages[i])
+            {
+                messages[i].text = MessageLog.Messages[i];
+            }
         }
 	}
 }
