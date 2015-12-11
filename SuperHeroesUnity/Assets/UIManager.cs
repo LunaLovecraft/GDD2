@@ -37,12 +37,23 @@ public class UIManager : MonoBehaviour {
     public Text CharHealth;
     public Text CharMove;
     public Text CharTraits;
+	public Image Portrait;
     Vector2 GlobalAnchor = new Vector2(0.0f, 0.5f);
-
-
+    public Text ToolkitText;
+    float StandbyButtonYPos;
     public GameObject indicator;
-
+    public GameObject Message1;
+    public GameObject Message2;
+    public GameObject Message3;
+    public GameObject Message4;
+    public GameObject Message5;
+    public GameObject Message6;
+    public GameObject Message7;
+    public GameObject Message8;
+    Text[] messages;
     Ability selectedAbility;
+
+
 
 
 	// Use this for initialization
@@ -63,14 +74,17 @@ public class UIManager : MonoBehaviour {
         HomeUI.AddRange(GameObject.FindGameObjectsWithTag("HomeUI"));
         MoveUI.AddRange(GameObject.FindGameObjectsWithTag("MoveUI"));
         PlanningUI.AddRange(GameObject.FindGameObjectsWithTag("PlanningUI"));
-        
+
+        CharTraits = GameObject.Find("TraitsText").GetComponent<Text>();
+		Portrait = GameObject.Find("Portrait").GetComponent<Image>();
+
         CharacterUI = new List<GameObject>();
         gm = gameObject.GetComponent<GameManager>();
         
         map = gm.map;
         Tiles = new GameObject[map.Height,map.Width];
 
-
+        StandbyButtonYPos = GameObject.Find("StandbyButton").GetComponent<RectTransform>().anchoredPosition.y;
         for (int y = 0; y < map.Height; y++)
         {
             for (int x = 0; x < map.Width; x++)
@@ -124,6 +138,7 @@ public class UIManager : MonoBehaviour {
 
         currentState = UIState.Default;
         UIUpdate();
+        messages = new Text[] { Message1.GetComponent<Text>(), Message2.GetComponent<Text>(), Message3.GetComponent<Text>(), Message4.GetComponent<Text>(), Message5.GetComponent<Text>(), Message6.GetComponent<Text>(), Message7.GetComponent<Text>(), Message8.GetComponent<Text>() };
     }
 
     public void ShowDamage(object sender, EventArgs e)
@@ -175,19 +190,35 @@ public class UIManager : MonoBehaviour {
                 Vector3 savePos = obj.GetComponent<RectTransform>().anchoredPosition3D;
                 if (selectedCharacter.Faction == 0)
                 {
-                    GlobalAnchor = new Vector2(1.0f, 0.5f);
+                    GlobalAnchor = new Vector2(1.0f, 1.0f);
                     obj.GetComponent<RectTransform>().anchorMax = GlobalAnchor;
                     obj.GetComponent<RectTransform>().anchorMin = GlobalAnchor;
                 }
                 else
                 {
-                    GlobalAnchor = new Vector2(0.0f, 0.5f);
+                    GlobalAnchor = new Vector2(0.0f, 1.0f);
                     obj.GetComponent<RectTransform>().anchorMax = GlobalAnchor;
                     obj.GetComponent<RectTransform>().anchorMin = GlobalAnchor;
                 }
                 obj.GetComponent<RectTransform>().anchoredPosition3D = new Vector3(-savePos.x, savePos.y, savePos.z);
             }
         }
+
+        RectTransform CharPanel = CharTraits.transform.parent.gameObject.GetComponent<RectTransform>();
+        Vector3 pos = CharPanel.anchoredPosition3D;
+        CharPanel.anchorMax = new Vector2(GlobalAnchor.x, 1.0f);
+        CharPanel.anchorMin = new Vector2(GlobalAnchor.x, 1.0f);
+        CharPanel.anchoredPosition3D = new Vector3(-pos.x, pos.y, pos.z);
+
+
+        RectTransform toolTipRect = ToolkitText.transform.parent.gameObject.GetComponent<RectTransform>();
+
+        pos = toolTipRect.anchoredPosition3D;
+        toolTipRect.anchorMax = new Vector2(GlobalAnchor.x, 0.0f);
+        toolTipRect.anchorMin = new Vector2(GlobalAnchor.x, 0.0f);
+        toolTipRect.anchoredPosition3D = new Vector3(-pos.x, pos.y, pos.z);
+            
+        
     }
 
     public void SelectCharacter(Character newSelection)
@@ -201,6 +232,7 @@ public class UIManager : MonoBehaviour {
                 {
                     indicator.transform.SetParent(character.transform, false);
                     indicator.GetComponent<SpriteRenderer>().color = character.transform.GetChild(0).GetComponent<SpriteRenderer>().color;
+                    
                 }
             }
 
@@ -242,30 +274,36 @@ public class UIManager : MonoBehaviour {
         }
         CharTraits.text = traits;
         GameObject CharPanel = GameObject.Find("CharacterInfoPanel");
-        if (newSelection.Faction == 0)
-        {
-            CharPanel.GetComponent<Image>().color = Color.blue;
-        }
-        else CharPanel.GetComponent<Image>().color = Color.red;
+        Debug.Log(CharPanel);
+		Portrait.sprite = Resources.Load<Sprite>("CharacterSprites/" + selectedCharacter.Name);
+        //if (newSelection.Faction == 0)
+        //{
+            //CharPanel.GetComponent<Image>().color = Color.blue;
+        //}
+        //else CharPanel.GetComponent<Image>().color = Color.red;
 
 
-        float yOffset = 0.0f;
+        float yOffset = 445;
         Debug.Log(newSelection.Abilities.Count);
         foreach(Ability ability in newSelection.Abilities)
         {
             GameObject abilityPanel = Instantiate(AbilityPanel);
             abilityPanel.transform.SetParent(CurrentCanvas.transform, false);
-            abilityPanel.GetComponent<RectTransform>().anchorMin = GlobalAnchor;
-            abilityPanel.GetComponent<RectTransform>().anchorMax = GlobalAnchor;
             if(selectedCharacter.Faction == 0)
             { 
-                abilityPanel.GetComponent<RectTransform>().anchoredPosition = new Vector3(334.0f, -yOffset);
+				GlobalAnchor = new Vector2(0.0f, 1.0f);
+				abilityPanel.GetComponent<RectTransform>().anchorMin = GlobalAnchor;
+				abilityPanel.GetComponent<RectTransform>().anchorMax = GlobalAnchor;
+                abilityPanel.GetComponent<RectTransform>().anchoredPosition = new Vector3(105, -yOffset);
             }
             else
             {
-                abilityPanel.GetComponent<RectTransform>().anchoredPosition = new Vector3(-334.0f, -yOffset);
+				GlobalAnchor = new Vector2(1.0f, 1.0f);
+				abilityPanel.GetComponent<RectTransform>().anchorMin = GlobalAnchor;
+				abilityPanel.GetComponent<RectTransform>().anchorMax = GlobalAnchor;
+                abilityPanel.GetComponent<RectTransform>().anchoredPosition = new Vector3(-105, -yOffset);
             }
-            yOffset += 150.0f;
+            yOffset += 140.0f;
             List<string> abilityText = new List<string>();
             string name = ability.Method.Name;
             abilityText.Add(name);
@@ -281,7 +319,7 @@ public class UIManager : MonoBehaviour {
 
         //AbilityName.text = selectedAbility.Method.Name;
         //AbilityDescription.text = "Range: " + Abilities.GetAbilityInfo(selectedAbility.Method.Name, AbilityInfo.Range) as string + "\nDescription: " +
-        //Abilities.GetAbilityInfo(selectedAbility.Method.Name, AbilityInfo.Description) as string;
+       // Abilities.GetAbilityInfo(selectedAbility.Method.Name, AbilityInfo.Description) as string;
     }
 
     public void TileHovered(int x, int y)
@@ -349,7 +387,15 @@ public class UIManager : MonoBehaviour {
                         }
                     }
 
-                    Moves = map.map[selectedCharacter.Y, selectedCharacter.X].FindPossibleMoves((int)selectedCharacter.Movement, selectedCharacter.Speed, null, null, true, selectedCharacter.Faction);
+                    Moves = map.map[selectedCharacter.Y, selectedCharacter.X].FindPossibleMoves((int)selectedCharacter.Movement, selectedCharacter.Speed - selectedCharacter.MovesThisTurn, null, null, true, selectedCharacter.Faction);
+
+                    if(selectedCharacter.Speed - selectedCharacter.MovesThisTurn == 0)
+                    {
+                        CleanMap();
+                        currentState = UIState.Default;
+                        selectedCharacter.canMove = false;
+                    }
+
                     UIUpdate();
                     break;
                 }
@@ -362,6 +408,9 @@ public class UIManager : MonoBehaviour {
             if(UIInformationHandler.InformationStack.Count == 0)
             {
                 CleanMap();
+                currentState = UIState.Attacking;
+                CleanMap();
+                History.Clear();
                 currentState = UIState.Default;
                 UIUpdate();
                 History.Clear();
@@ -417,10 +466,23 @@ public class UIManager : MonoBehaviour {
                 History.Push(currentState);
                 currentState = UIState.Attacking;
                 break;
+            case "Standby": // Standby button is pressed
+
+                // The selected character can no longer act during the turn
+                // The next character is then selected
+
+                selectedCharacter.canAct = false;
+                FindNextCharacter();
+                break;
             case "Back":
                 CleanMap();
 
                 currentState = (UIState) History.Pop();
+                break;
+            case "Hold":
+                CleanMap();
+                currentState = UIState.Default;
+                UIUpdate();
                 break;
             default:
                 currentState = UIState.Default;
@@ -429,9 +491,52 @@ public class UIManager : MonoBehaviour {
         UIUpdate();
     }
 
+    public void SetToolkitText(string message)
+    {
+        ToolkitText.text = "Tool Tip: " + message;
+    }
+
+    /// <summary>
+    /// Selects the next character.
+    /// If there is no remain characters, it ends the turn
+    /// </summary>
+    void FindNextCharacter()
+    {
+        Debug.Log("Selecting next character:");
+
+        CleanMap();
+        currentState = UIState.Default;
+        UIUpdate();
+        History.Clear();
+
+        // Finds next character that can act.
+        Character nextChar = null;
+        for (int i = 0; i < gm.Factions[TurnManager.currentFactionTurn].Units.Count; ++i)
+        {
+            if ((gm.Factions[TurnManager.currentFactionTurn].Units[i]).canAct)
+            {
+                nextChar = gm.Factions[TurnManager.currentFactionTurn].Units[i];
+                break;
+            }
+        }
+
+        // Ends the turn if there is no new character.
+        if (nextChar == null)
+        {
+            Debug.Log("No character found. Ending turn.");
+            positionAnchors();
+            TurnManager.currentState = TurnState.TurnEnd;
+        }
+        else   // Selects the next character if there is one.
+        {
+            SelectCharacter(nextChar);
+        }
+
+    }
+
     void CleanMap()
     {
-        if (currentState == UIState.Attacking || currentState == UIState.Planning)
+        if (currentState == UIState.Attacking)
         {
             List<GameObject> toDelete = new List<GameObject>();
             toDelete.AddRange(GameObject.FindGameObjectsWithTag("Abilities"));
@@ -440,17 +545,17 @@ public class UIManager : MonoBehaviour {
             {
                 Destroy(btn);
             }
-            if (currentState == UIState.Planning)
+        }
+        else if (currentState == UIState.Planning)
+        {
+            foreach (Node tile in map.map)
             {
-                foreach (Node tile in map.map)
-                {
-                    Tiles[tile.Y, tile.X].GetComponent<SpriteRenderer>().color = Tiles[tile.Y, tile.X].GetComponent<TileScript>().baseColor;
-                }
+                Tiles[tile.Y, tile.X].GetComponent<SpriteRenderer>().color = Tiles[tile.Y, tile.X].GetComponent<TileScript>().baseColor;
             }
         }
         else if (currentState == UIState.Movement)
         {
-            foreach (Node node in Moves)
+            foreach (Node node in map.map)
             {
                 Tiles[node.Y, node.X].GetComponent<SpriteRenderer>().color = Tiles[node.Y, node.X].GetComponent<TileScript>().baseColor;
             }
@@ -500,8 +605,11 @@ public class UIManager : MonoBehaviour {
         }
         foreach(GameObject obj in HomeUI)
         {
+            
             if (obj.GetComponent<Button>() != null)
-            obj.GetComponent<Button>().interactable = true;
+            {
+                obj.GetComponent<Button>().interactable = true;
+            }
         }
         
     }
@@ -509,7 +617,7 @@ public class UIManager : MonoBehaviour {
     void drawSelectingUI()
     {
         List<GameObject> unwanted = new List<GameObject>();
-        unwanted.AddRange(GameObject.FindGameObjectsWithTag("Abilities"));
+        
         foreach (GameObject obj in unwanted)
         {
             if (obj.GetComponent<Button>() != null)
@@ -540,8 +648,14 @@ public class UIManager : MonoBehaviour {
 
     void drawMovementUI()
     {
+        foreach (GameObject obj in GameObject.FindGameObjectsWithTag("Abilities"))
+        {
+            Destroy(obj);
+        }
+
         List<GameObject> unwanted = new List<GameObject>();
         unwanted.AddRange(AttackUI);
+        
         unwanted.AddRange(HomeUI);
         foreach (GameObject obj in unwanted)
         {
@@ -556,7 +670,7 @@ public class UIManager : MonoBehaviour {
             if (obj.GetComponent<Button>() != null)
             obj.GetComponent<Button>().interactable = true;
         }
-        Moves = map.map[selectedCharacter.Y, selectedCharacter.X].FindPossibleMoves((int)selectedCharacter.Movement, selectedCharacter.Speed ,null, null, true, selectedCharacter.Faction);
+        Moves = map.map[selectedCharacter.Y, selectedCharacter.X].FindPossibleMoves((int)selectedCharacter.Movement, selectedCharacter.Speed - selectedCharacter.MovesThisTurn,null, null, true, selectedCharacter.Faction);
 
         foreach (Node node in map.map)
         {
@@ -574,7 +688,7 @@ public class UIManager : MonoBehaviour {
     {
         List<GameObject> unwanted = new List<GameObject>();
         unwanted.AddRange(MoveUI);
-        unwanted.AddRange(HomeUI);
+        
         unwanted.AddRange(PlanningUI);
         foreach (GameObject obj in unwanted)
         {
@@ -583,6 +697,7 @@ public class UIManager : MonoBehaviour {
         }
         List<GameObject> attackUI = new List<GameObject>();
         attackUI.AddRange(AttackUI);
+        attackUI.AddRange(HomeUI);
         attackUI.AddRange(BackUI);
         foreach (GameObject obj in attackUI)
         {
@@ -591,23 +706,26 @@ public class UIManager : MonoBehaviour {
         }
         
         List<GameObject> AbilityButtons = new List<GameObject>();
-        float yOffset = 0.0f;
+        float yOffset = StandbyButtonYPos - 200;
         foreach(Ability ability in selectedCharacter.MyAbilities)
         {
             Button button = Instantiate(abilityButton);
             button.transform.SetParent(CurrentCanvas.transform, false);
             button.GetComponentInChildren<Text>().text = ability.Method.Name;
             button.transform.localPosition = new Vector3(0, 0, 0);
-            button.GetComponent<RectTransform>().anchorMax = GlobalAnchor;
-            button.GetComponent<RectTransform>().anchorMin = GlobalAnchor;
+
             
             if(selectedCharacter.Faction == 0)
-            {
-                button.GetComponent<RectTransform>().anchoredPosition = new Vector2(125, yOffset);
+			{
+				button.GetComponent<RectTransform>().anchorMax = new Vector2(0f, 1.0f);
+				button.GetComponent<RectTransform>().anchorMin = new Vector2(0f, 1.0f);
+				button.GetComponent<RectTransform>().anchoredPosition = new Vector2(328, yOffset);
             }
             else
             {
-                button.GetComponent<RectTransform>().anchoredPosition = new Vector2(-125, yOffset);
+				button.GetComponent<RectTransform>().anchorMax = new Vector2(1.0f, 1.0f);
+				button.GetComponent<RectTransform>().anchorMin = new Vector2(1.0f, 1.0f);
+				button.GetComponent<RectTransform>().anchoredPosition = new Vector2(-328, yOffset);
             }
             button.GetComponent<AbilityButtonScript>().gm = gameObject;
             button.GetComponent<AbilityButtonScript>().map = gm.map;
@@ -625,6 +743,7 @@ public class UIManager : MonoBehaviour {
         script(myChar, map);
         History.Push(currentState);
         currentState = UIState.Planning;
+        CleanMap();
         selectedAbility = script;
         UIUpdate();
     }
@@ -633,5 +752,12 @@ public class UIManager : MonoBehaviour {
 
 	// Update is called once per frame
 	void Update () {
+        for(int i = 0; i < MessageLog.Messages.Length; i++)
+        {
+            if(messages[i].text != MessageLog.Messages[i])
+            {
+                messages[i].text = MessageLog.Messages[i];
+            }
+        }
 	}
 }
