@@ -9,7 +9,8 @@ enum UIState
     Default,
     Movement,
     Attacking,
-    Planning
+    Planning,
+    Waiting
 }
 
 public class UIManager : MonoBehaviour {
@@ -52,7 +53,6 @@ public class UIManager : MonoBehaviour {
     public GameObject Message8;
     Text[] messages;
     Ability selectedAbility;
-    bool betweenTurns = false;
 
 
 
@@ -143,7 +143,14 @@ public class UIManager : MonoBehaviour {
 
     public void TurnEnd()
     {
-        betweenTurns = true;
+        currentState = UIState.Waiting;
+        foreach(GameObject btn in HomeUI)
+        {
+            if(btn.GetComponent<Button>() != null)
+            {
+                btn.GetComponent<Button>().interactable = false;
+            }
+        }
         Toast.SendToast("Turn Start", TurnStart);
     }
 
@@ -151,7 +158,7 @@ public class UIManager : MonoBehaviour {
     {
         positionAnchors();
         TurnManager.currentState = TurnState.TurnEnd;
-        betweenTurns = false;
+        
     }
 
 
@@ -385,8 +392,6 @@ public class UIManager : MonoBehaviour {
 
     public void TileClicked(int x, int y)
     {
-        if (!betweenTurns)
-        {
             if (currentState == UIState.Movement && selectedCharacter.canMove)
             {
                 foreach (Node node in Moves)
@@ -458,7 +463,6 @@ public class UIManager : MonoBehaviour {
 
                 }
             }
-        }
     }
 
     public void HandleClick(string buttonState)
@@ -470,43 +474,40 @@ public class UIManager : MonoBehaviour {
     public void ButtonClicked(string buttonState)
     {
 
-        if (!betweenTurns)
+        //clearUI();        
+        switch (buttonState)
         {
-            //clearUI();        
-            switch (buttonState)
-            {
-                case "Movement":
-                    History.Push(currentState);
-                    currentState = UIState.Movement;
-                    break;
-                case "Attack":
-                    History.Push(currentState);
-                    currentState = UIState.Attacking;
-                    break;
-                case "Standby": // Standby button is pressed
+            case "Movement":
+                History.Push(currentState);
+                currentState = UIState.Movement;
+                break;
+            case "Attack":
+                History.Push(currentState);
+                currentState = UIState.Attacking;
+                break;
+            case "Standby": // Standby button is pressed
 
-                    // The selected character can no longer act during the turn
-                    // The next character is then selected
+                // The selected character can no longer act during the turn
+                // The next character is then selected
 
-                    selectedCharacter.canAct = false;
-                    FindNextCharacter();
-                    break;
-                case "Back":
-                    CleanMap();
+                selectedCharacter.canAct = false;
+                FindNextCharacter();
+                break;
+            case "Back":
+                CleanMap();
 
-                    currentState = (UIState)History.Pop();
-                    break;
-                case "Hold":
-                    CleanMap();
-                    currentState = UIState.Default;
-                    UIUpdate();
-                    break;
-                default:
-                    currentState = UIState.Default;
-                    break;
-            }
-            UIUpdate();
+                currentState = (UIState)History.Pop();
+                break;
+            case "Hold":
+                CleanMap();
+                currentState = UIState.Default;
+                UIUpdate();
+                break;
+            default:
+                currentState = UIState.Default;
+                break;
         }
+        UIUpdate();
     }
 
     public void SetToolkitText(string message)
@@ -593,6 +594,8 @@ public class UIManager : MonoBehaviour {
                 break;
             case UIState.Planning:
                 drawSelectingUI();
+                break;
+            case UIState.Waiting:
                 break;
             default:
                 drawDefaultUI();
