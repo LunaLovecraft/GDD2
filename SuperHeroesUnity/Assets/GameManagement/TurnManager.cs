@@ -25,7 +25,6 @@ public static class TurnManager
 
     public static void Update()
     {
-        Debug.Log(currentState);
         switch (currentState)
         {
             case TurnState.Actions:
@@ -79,5 +78,7 @@ public static class TurnManager
         {
             currentFactionTurn = 0;
         }
+
+        currentState = TurnState.TurnStart;
     }
 }
