@@ -52,7 +52,7 @@ public class UIManager : MonoBehaviour {
     public GameObject Message8;
     Text[] messages;
     Ability selectedAbility;
-
+    bool betweenTurns = false;
 
 
 
@@ -140,6 +140,20 @@ public class UIManager : MonoBehaviour {
         UIUpdate();
         messages = new Text[] { Message1.GetComponent<Text>(), Message2.GetComponent<Text>(), Message3.GetComponent<Text>(), Message4.GetComponent<Text>(), Message5.GetComponent<Text>(), Message6.GetComponent<Text>(), Message7.GetComponent<Text>(), Message8.GetComponent<Text>() };
     }
+
+    public void TurnEnd()
+    {
+        betweenTurns = true;
+        Toast.SendToast("Turn Start", TurnStart);
+    }
+
+    public void TurnStart()
+    {
+        positionAnchors();
+        TurnManager.currentState = TurnState.TurnEnd;
+        betweenTurns = false;
+    }
+
 
     public void ShowDamage(object sender, EventArgs e)
     {
@@ -371,79 +385,80 @@ public class UIManager : MonoBehaviour {
 
     public void TileClicked(int x, int y)
     {
-        if (currentState == UIState.Movement && selectedCharacter.canMove)
+        if (!betweenTurns)
         {
-            foreach (Node node in Moves)
+            if (currentState == UIState.Movement && selectedCharacter.canMove)
             {
-                if (node.X == x && node.Y == y)
+                foreach (Node node in Moves)
                 {
-                    foreach (GameObject tile in CharacterUI)
+                    if (node.X == x && node.Y == y)
                     {
-                        if (tile.GetComponent<CharacterSpriteScript>().X == selectedCharacter.X && tile.GetComponent<CharacterSpriteScript>().Y == selectedCharacter.Y)
+                        foreach (GameObject tile in CharacterUI)
                         {
-                            tile.GetComponent<CharacterSpriteScript>().moveTo(x, y);
-                            selectedCharacter.Move(y, x);
-                            break;
+                            if (tile.GetComponent<CharacterSpriteScript>().X == selectedCharacter.X && tile.GetComponent<CharacterSpriteScript>().Y == selectedCharacter.Y)
+                            {
+                                tile.GetComponent<CharacterSpriteScript>().moveTo(x, y);
+                                selectedCharacter.Move(y, x);
+                                break;
+                            }
                         }
-                    }
 
-                    Moves = map.map[selectedCharacter.Y, selectedCharacter.X].FindPossibleMoves((int)selectedCharacter.Movement, selectedCharacter.Speed - selectedCharacter.MovesThisTurn, null, null, true, selectedCharacter.Faction);
+                        Moves = map.map[selectedCharacter.Y, selectedCharacter.X].FindPossibleMoves((int)selectedCharacter.Movement, selectedCharacter.Speed - selectedCharacter.MovesThisTurn, null, null, true, selectedCharacter.Faction);
 
-                    if(selectedCharacter.Speed - selectedCharacter.MovesThisTurn == 0)
-                    {
-                        CleanMap();
-                        currentState = UIState.Default;
-                        selectedCharacter.canMove = false;
-                    }
+                        if (selectedCharacter.Speed - selectedCharacter.MovesThisTurn == 0)
+                        {
+                            CleanMap();
+                            currentState = UIState.Default;
+                            selectedCharacter.canMove = false;
+                        }
 
-                    UIUpdate();
-                    break;
-                }
-            }
-        }
-        else if(currentState == UIState.Planning && SelectedAbilityOptions != -1 && selectedCharacter.canAct)
-        {
-            Debug.Log("Using Ability");
-            UIInformationHandler.InformationStack.Peek().SelectOption(SelectedAbilityOptions);
-            if(UIInformationHandler.InformationStack.Count == 0)
-            {
-                CleanMap();
-                currentState = UIState.Attacking;
-                CleanMap();
-                History.Clear();
-                currentState = UIState.Default;
-                UIUpdate();
-                History.Clear();
-
-                Character nextChar = null;
-                for (int i = 0; i < gm.Factions[TurnManager.currentFactionTurn].Units.Count; ++i)
-                {
-                    if ((gm.Factions[TurnManager.currentFactionTurn].Units[i]).canAct)
-                    {
-                        nextChar = gm.Factions[TurnManager.currentFactionTurn].Units[i];
+                        UIUpdate();
                         break;
                     }
                 }
-                if (nextChar == null)
-                {
-                    TurnManager.currentState = TurnState.TurnEnd;
-                    positionAnchors();
-                }
-                else
-                {
-                    SelectCharacter(nextChar);
-                }
             }
-        }
-        else if(currentState == UIState.Default)
-        {
-            if(map.map[y, x].myCharacter != selectedCharacter && map.map[y, x].myCharacter != null)
+            else if (currentState == UIState.Planning && SelectedAbilityOptions != -1 && selectedCharacter.canAct)
             {
-                SelectCharacter(map.map[y, x].myCharacter);
+                Debug.Log("Using Ability");
+                UIInformationHandler.InformationStack.Peek().SelectOption(SelectedAbilityOptions);
+                if (UIInformationHandler.InformationStack.Count == 0)
+                {
+                    CleanMap();
+                    currentState = UIState.Attacking;
+                    CleanMap();
+                    History.Clear();
+                    currentState = UIState.Default;
+                    UIUpdate();
+                    History.Clear();
 
+                    Character nextChar = null;
+                    for (int i = 0; i < gm.Factions[TurnManager.currentFactionTurn].Units.Count; ++i)
+                    {
+                        if ((gm.Factions[TurnManager.currentFactionTurn].Units[i]).canAct)
+                        {
+                            nextChar = gm.Factions[TurnManager.currentFactionTurn].Units[i];
+                            break;
+                        }
+                    }
+                    if (nextChar == null)
+                    {
+                        TurnEnd();
+                    }
+                    else
+                    {
+                        SelectCharacter(nextChar);
+                    }
+                }
+            }
+            else if (currentState == UIState.Default)
+            {
+                if (map.map[y, x].myCharacter != selectedCharacter && map.map[y, x].myCharacter != null)
+                {
+                    SelectCharacter(map.map[y, x].myCharacter);
+
+                }
             }
         }
-        
     }
 
     public void HandleClick(string buttonState)
@@ -454,41 +469,44 @@ public class UIManager : MonoBehaviour {
 
     public void ButtonClicked(string buttonState)
     {
-        
-        //clearUI();        
-        switch (buttonState)
+
+        if (!betweenTurns)
         {
-            case "Movement":
-                History.Push(currentState);
-                currentState = UIState.Movement;
-                break;
-            case "Attack":
-                History.Push(currentState);
-                currentState = UIState.Attacking;
-                break;
-            case "Standby": // Standby button is pressed
+            //clearUI();        
+            switch (buttonState)
+            {
+                case "Movement":
+                    History.Push(currentState);
+                    currentState = UIState.Movement;
+                    break;
+                case "Attack":
+                    History.Push(currentState);
+                    currentState = UIState.Attacking;
+                    break;
+                case "Standby": // Standby button is pressed
 
-                // The selected character can no longer act during the turn
-                // The next character is then selected
+                    // The selected character can no longer act during the turn
+                    // The next character is then selected
 
-                selectedCharacter.canAct = false;
-                FindNextCharacter();
-                break;
-            case "Back":
-                CleanMap();
+                    selectedCharacter.canAct = false;
+                    FindNextCharacter();
+                    break;
+                case "Back":
+                    CleanMap();
 
-                currentState = (UIState) History.Pop();
-                break;
-            case "Hold":
-                CleanMap();
-                currentState = UIState.Default;
-                UIUpdate();
-                break;
-            default:
-                currentState = UIState.Default;
-                break;
+                    currentState = (UIState)History.Pop();
+                    break;
+                case "Hold":
+                    CleanMap();
+                    currentState = UIState.Default;
+                    UIUpdate();
+                    break;
+                default:
+                    currentState = UIState.Default;
+                    break;
+            }
+            UIUpdate();
         }
-        UIUpdate();
     }
 
     public void SetToolkitText(string message)
@@ -524,8 +542,7 @@ public class UIManager : MonoBehaviour {
         if (nextChar == null)
         {
             Debug.Log("No character found. Ending turn.");
-            positionAnchors();
-            TurnManager.currentState = TurnState.TurnEnd;
+            TurnEnd();
         }
         else   // Selects the next character if there is one.
         {
