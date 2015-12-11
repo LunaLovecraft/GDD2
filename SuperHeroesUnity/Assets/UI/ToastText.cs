@@ -23,7 +23,7 @@ public class ToastText : MonoBehaviour {
 			if(!reverse){
 				this.transform.position = new Vector3(this.transform.position.x, this.transform.position.y - 0.08f, this.transform.position.z);
 				distanceMoved += 0.08f;
-				if(distanceMoved >= 4.0f){
+				if(distanceMoved >= 2.0f){
 					this.transform.position = new Vector3(this.transform.position.x, 4.0f, this.transform.position.z);
 					reverse = true;
 					wait = true;

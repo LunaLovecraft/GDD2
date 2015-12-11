@@ -7,7 +7,7 @@ public delegate void PostToast();
 public static class Toast{
 
 	private static GameObject messagePrefab;
-	private static Queue<GameObject> outgoingToasts;
+	public static Queue<GameObject> outgoingToasts;
 
 	public static void Initialize(GameObject textPrefab){
 		messagePrefab = textPrefab;
@@ -15,7 +15,7 @@ public static class Toast{
 	}
 
 	public static void SendToast(string message){
-		GameObject newToast = GameObject.Instantiate (messagePrefab, new Vector3 (1.66f, 8.0f, -2.2f), Quaternion.identity) as GameObject;
+		GameObject newToast = GameObject.Instantiate (messagePrefab, new Vector3 (1.66f, 6.0f, -2.2f), Quaternion.identity) as GameObject;
 		newToast.GetComponent<ToastText>().Initialize(message);
 		PostToast myToast = NextToast;
 		newToast.GetComponent<ToastText> ().endOfLife += myToast;
@@ -26,7 +26,7 @@ public static class Toast{
 	}
 
 	public static void SendToast(string message, PostToast endFunction){
-		GameObject newToast = GameObject.Instantiate (messagePrefab, new Vector3 (1.66f, 8.0f, -2.2f), Quaternion.identity) as GameObject;
+		GameObject newToast = GameObject.Instantiate (messagePrefab, new Vector3 (1.66f, 6.0f, -2.2f), Quaternion.identity) as GameObject;
 		newToast.GetComponent<ToastText>().Initialize(message);
 		PostToast myToast = NextToast;
 		newToast.GetComponent<ToastText> ().endOfLife += endFunction;
