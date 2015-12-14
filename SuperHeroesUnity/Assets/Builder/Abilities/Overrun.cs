@@ -22,7 +22,7 @@ public static partial class Abilities{
 	/// <summary>
 	/// Ability Description
 	/// </summary>
-	public static string OverrunDescription = "All characters are overrun by a swarm of rodents";
+	public static string OverrunDescription = "Enemies are overrun by a swarm of rodents";
 
 	/// <summary>
 	/// Chill Of Death Ability, hurts enemies within a 3 tile radius of the player
@@ -50,7 +50,7 @@ public static partial class Abilities{
 	{
 		for (int i = 0; i < affectedNodes.Count; ++i)
 		{
-			if (affectedNodes[i].myCharacter != null)
+			if (affectedNodes[i].myCharacter != null && affectedFaction != myChar.Faction)
 			{
 				myChar.DamageOtherCharacter(affectedNodes[i].myCharacter, OverrunDamage, DamageType.Physical);
 			}

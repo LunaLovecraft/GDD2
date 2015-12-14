@@ -97,16 +97,15 @@ public class UIManager : MonoBehaviour {
                 switch (tileHeight)
                 {
                     case TerrainHeight.Empty:
-                        tempTile.GetComponent<SpriteRenderer>().color = Color.black;
-                        tempTile.GetComponent<TileScript>().baseColor = Color.black;
+						tempTile.GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("houseTile");
+                        tempTile.GetComponent<TileScript>().baseColor = Color.white;
                         break;
                     case TerrainHeight.Ground:
-                        tempTile.GetComponent<SpriteRenderer>().color = Color.white;
                         tempTile.GetComponent<TileScript>().baseColor = Color.white;
                         break;
                     case TerrainHeight.Wall:
-                        tempTile.GetComponent<SpriteRenderer>().color = Color.gray;
-                        tempTile.GetComponent<TileScript>().baseColor = Color.gray;
+					tempTile.GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("wallTile");
+                        tempTile.GetComponent<TileScript>().baseColor = Color.white;
                         break;
                 }
 
@@ -128,7 +127,9 @@ public class UIManager : MonoBehaviour {
                     }
                     else
                     {
-                        character.transform.FindChild("CharacterOutline").GetComponent<SpriteRenderer>().color = Color.red;
+						SpriteRenderer charSprite = character.transform.FindChild("CharacterOutline").GetComponent<SpriteRenderer>();
+						charSprite.color = Color.red;
+						charSprite.sprite = Resources.Load<Sprite>("CharacterOutlines/" + map.map[y, x].myCharacter.Name + "_OUTLINE");
                     }
                     CharacterUI.Add(character);
          
@@ -278,6 +279,7 @@ public class UIManager : MonoBehaviour {
 
         List<GameObject> unwanted = new List<GameObject>();
         unwanted.AddRange(GameObject.FindGameObjectsWithTag("AbilityPanelUI"));
+		unwanted.AddRange(GameObject.FindGameObjectsWithTag("Abilities"));
 
         foreach(GameObject obj in unwanted)
         {

@@ -39,7 +39,7 @@ public static partial class Abilities{
 		choices.Add(new List<Node>());
 
 		//add all of the nodes within 2 Moves of the player
-		choices[0] = myChar.MyLocation.FindPossibleMoves(1, PoisonSpraySplash);
+		choices[0] = myChar.MyLocation.FindPossibleMoves(-1, PoisonSpraySplash);
         choices[0].Remove(myChar.MyLocation);
 
 		//Push so that the UI can access

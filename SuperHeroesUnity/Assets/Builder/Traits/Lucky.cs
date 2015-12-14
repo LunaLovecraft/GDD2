@@ -11,7 +11,7 @@ public static partial class Traits
     // This function will be called to initialize the trait to the proper event handlers.
     public static void Init_Lucky(Character myChar)
     {
-        myChar.OnDealDamage += new EventHandler(Event_Lucky);
+        myChar.OnDamaged += new EventHandler(Event_Lucky);
     }
 
     // If a trait causes multiple events, then it can have multiple functions to it.

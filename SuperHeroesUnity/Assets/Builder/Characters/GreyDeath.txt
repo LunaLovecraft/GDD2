@@ -6,4 +6,4 @@ Abilities
 LifeWither
 ChillOfDeath
 Traits
-Starving
+Regenerate

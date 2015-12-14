@@ -56,7 +56,7 @@ public static partial class Abilities{
 	{
 		for (int i = 0; i < affectedNodes.Count; ++i)
 		{
-			if (affectedNodes[i].myCharacter != null && affectedFaction != myChar.Faction)
+			if (affectedNodes[i].myCharacter != null && affectedFaction == myChar.Faction)
 			{
 				myChar.DamageOtherCharacter(affectedNodes[i].myCharacter, AxeThrowDamage, DamageType.Physical);
 			}

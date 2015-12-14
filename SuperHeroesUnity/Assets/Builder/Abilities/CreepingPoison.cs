@@ -13,7 +13,7 @@ public static partial class Abilities
     /// </summary>
     public static int CreepingPoisonRange = 0;
 
-	public static int CreepingPoisonSplash = 10;
+	public static int CreepingPoisonSplash = 16;
 
 	public static int CreepingPoisonDamage = 1;
 
@@ -44,12 +44,12 @@ public static partial class Abilities
 		choices.Add(new List<Node>());
 		
 		//add all of the nodes within 2 Moves of the player
-		choices[0] = myChar.MyLocation.FindPossibleMoves(1, CreepingPoisonSplash);
+		choices[0] = myChar.MyLocation.FindPossibleMoves(-1, CreepingPoisonSplash);
 		choices[0].Remove(myChar.MyLocation);
 		
 		//Push so that the UI can access
 
-		UIInformationHandler.InformationStack.Push(new UIInformation(myChar, map, choices, 0, CreepingPoisonEffect));
+		UIInformationHandler.InformationStack.Push(new UIInformation(myChar, map, choices, 1, CreepingPoisonEffect));
 	}
 	
 	public static void CreepingPoisonEffect(Character myChar, GridHandler map, int affectedFaction, List<Node> affectedNodes)
@@ -58,7 +58,7 @@ public static partial class Abilities
 		{
 			if (affectedNodes[i].myCharacter != null && affectedFaction != myChar.Faction)
 			{
-				affectedNodes[i].myCharacter.DamageCharacter(CreepingPoisonDamage,DamageType.Poison);
+				myChar.DamageOtherCharacter(affectedNodes[i].myCharacter, CreepingPoisonDamage, DamageType.Poison);
 			}
 		}
         UIInformationHandler.InformationStack.Clear();
