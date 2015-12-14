@@ -7,29 +7,29 @@ public static partial class Abilities{
 	/// <summary>
 	/// Range info
 	/// </summary>
-	public static int ChillOfDeathRange = 0;
+	public static int OverrunRange = 0;
 	
-	public static int ChillOfDeathSplash = 3;
+	public static int OverrunSplash = 6;
 
-	public static int ChillOfDeathDamage = 5;
+	public static int OverrunDamage = 3;
 	
 
 	/// <summary>
 	/// Offensive info
 	/// </summary>
-	public static bool ChillOfDeathOffensive = true;
+	public static bool OverrunOffensive = true;
 
 	/// <summary>
 	/// Ability Description
 	/// </summary>
-	public static string ChillOfDeathDescription = "An icy storm surrounds the target";
+	public static string OverrunDescription = "All characters are overrun by a swarm of rodents";
 
 	/// <summary>
 	/// Chill Of Death Ability, hurts enemies within a 3 tile radius of the player
 	/// </summary>
 	/// <param name="myChar"></param>
 	/// <param name="map"></param>
-	public static void ChillOfDeath(Character myChar, GridHandler map)
+	public static void Overrun(Character myChar, GridHandler map)
 	{
 
 		//create a list of the possible moves, and the nodes they affect
@@ -39,20 +39,20 @@ public static partial class Abilities{
 		choices.Add(new List<Node>());
 
 		//add all of the nodes within 2 Moves of the player
-		choices[0] = myChar.MyLocation.FindPossibleMoves(-1, ChillOfDeathSplash);
+		choices[0] = myChar.MyLocation.FindPossibleMoves(-1, OverrunSplash);
         choices[0].Remove(myChar.MyLocation);
 
 		//Push so that the UI can access
-		UIInformationHandler.InformationStack.Push(new UIInformation(myChar, map, choices, 0, ChillOfDeathEffect));
+		UIInformationHandler.InformationStack.Push(new UIInformation(myChar, map, choices, 0, OverrunEffect));
 	}
 	
-	public static void ChillOfDeathEffect(Character myChar, GridHandler map, int affectedFaction, List<Node> affectedNodes)
+	public static void OverrunEffect(Character myChar, GridHandler map, int affectedFaction, List<Node> affectedNodes)
 	{
 		for (int i = 0; i < affectedNodes.Count; ++i)
 		{
-			if (affectedNodes[i].myCharacter != null && affectedFaction != myChar.Faction)
+			if (affectedNodes[i].myCharacter != null)
 			{
-				myChar.DamageOtherCharacter(affectedNodes[i].myCharacter, ChillOfDeathDamage, DamageType.Cold);
+				myChar.DamageOtherCharacter(affectedNodes[i].myCharacter, OverrunDamage, DamageType.Physical);
 			}
 		}
         UIInformationHandler.InformationStack.Clear();

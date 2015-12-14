@@ -11,21 +11,21 @@ public static partial class Abilities
     /// <summary>
     /// Range info
     /// </summary>
-    public static int LifeWitherRange = 15;
+    public static int LongShotRange = 15;
 
-	public static int LifeWitherSplash = 0;
+	public static int LongShotSplash = 0;
 
-	public static int LifeWitherDamage = 2;
+	public static int LongShotDamage = 4;
 
     /// <summary>
     /// Offensive info
     /// </summary>
-	public static bool LifeWitherOffensive = true;
+	public static bool LongShotOffensive = true;
 
 	/// <summary>
 	/// Ability Description
 	/// </summary>
-	public static string LifeWitherDescription = "Drains health from the enemy";
+	public static string LongShotDescription = "The enemy is hit by a careful sniper shot";
 
    
 
@@ -34,7 +34,7 @@ public static partial class Abilities
 	/// </summary>
 	/// <param name="myChar"></param>
 	/// <param name="map"></param>
-	public static void LifeWither(Character myChar, GridHandler map)
+	public static void LongShot(Character myChar, GridHandler map)
 	{
 
 		//create a list of the possible moves, and the nodes they affect
@@ -52,17 +52,16 @@ public static partial class Abilities
 		
 		//IMPORTANT
 		//push this so that the UI can access your stuff <3 -Sean
-		UIInformationHandler.InformationStack.Push(new UIInformation(myChar, map, choices, 0, LifeWitherEffect));
+		UIInformationHandler.InformationStack.Push(new UIInformation(myChar, map, choices, 1, LongShotEffect));
 	}
 	
-	public static void LifeWitherEffect(Character myChar, GridHandler map, int affectedFaction, List<Node> affectedNodes)
+	public static void LongShotEffect(Character myChar, GridHandler map, int affectedFaction, List<Node> affectedNodes)
 	{
 		for (int i = 0; i < affectedNodes.Count; ++i)
 		{
 			if (affectedNodes[i].myCharacter != null && affectedFaction != myChar.Faction)
 			{
-				affectedNodes[i].myCharacter.DamageCharacter(LifeWitherDamage,DamageType.Cold);
-				myChar.HealCharacter(2);
+				affectedNodes[i].myCharacter.DamageCharacter(LongShotDamage,DamageType.Physical);
 			}
 		}
         UIInformationHandler.InformationStack.Clear();

@@ -3,7 +3,7 @@ Wink
 2
 ground
 Abilities
-AxeThrow
-Stomp
+LongShot
+Grenade
 Traits
 WatchfulEye

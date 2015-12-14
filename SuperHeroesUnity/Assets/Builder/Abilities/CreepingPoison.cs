@@ -11,56 +11,54 @@ public static partial class Abilities
     /// <summary>
     /// Range info
     /// </summary>
-    public static int HealRange = 7;
+    public static int CreepingPoisonRange = 0;
 
-    public static int HealSplash = 0;
+	public static int CreepingPoisonSplash = 10;
 
-	public static int HealDamage = 4;
-
+	public static int CreepingPoisonDamage = 1;
 
     /// <summary>
     /// Offensive info
     /// </summary>
-    public static bool HealOffensive = false;
+	public static bool CreepingPoisonOffensive = true;
 
 	/// <summary>
 	/// Ability Description
 	/// </summary>
-	public static string HealDescription = "System calls Ally.health++";
+	public static string CreepingPoisonDescription = "A slow gas overwhelms the enemy team";
 
    
 
 	/// <summary>
-	/// Heal Ability
+	/// CreepingPoison
 	/// </summary>
 	/// <param name="myChar"></param>
 	/// <param name="map"></param>
-	public static void Heal(Character myChar, GridHandler map)
+	public static void CreepingPoison(Character myChar, GridHandler map)
 	{
 
 		//create a list of the possible moves, and the nodes they affect
 		List<List<Node>> choices = new List<List<Node>>();
+		
 		//Add a list of nodes to the previous list, representing a set of new affected nodes;
 		choices.Add(new List<Node>());
+		
 		//add all of the nodes within 2 Moves of the player
-		foreach(Node tile in map.map)
-		{
-			if(tile.myCharacter != null && tile.myCharacter.Faction == myChar.Faction)
-			{
-				choices[0].Add(tile);
-			}
-		}
+		choices[0] = myChar.MyLocation.FindPossibleMoves(1, CreepingPoisonSplash);
+		choices[0].Remove(myChar.MyLocation);
+		
+		//Push so that the UI can access
 
-		UIInformationHandler.InformationStack.Push(new UIInformation(myChar, map, choices, 1, HealEffect));
+		UIInformationHandler.InformationStack.Push(new UIInformation(myChar, map, choices, 0, CreepingPoisonEffect));
 	}
 	
-	public static void HealEffect(Character myChar, GridHandler map, int affectedFaction, List<Node> affectedNodes)
+	public static void CreepingPoisonEffect(Character myChar, GridHandler map, int affectedFaction, List<Node> affectedNodes)
 	{
 		for (int i = 0; i < affectedNodes.Count; ++i)
 		{
 			if (affectedNodes[i].myCharacter != null && affectedFaction != myChar.Faction)
 			{
-				affectedNodes[i].myCharacter.HealCharacter(HealDamage);
+				affectedNodes[i].myCharacter.DamageCharacter(CreepingPoisonDamage,DamageType.Poison);
 			}
 		}
         UIInformationHandler.InformationStack.Clear();

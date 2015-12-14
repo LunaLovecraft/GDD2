@@ -1,6 +1,6 @@
 PaulBunyan
 30
-2
+4
 ground
 Abilities
 AxeThrow

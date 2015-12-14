@@ -11,30 +11,30 @@ public static partial class Abilities
     /// <summary>
     /// Range info
     /// </summary>
-    public static int LifeWitherRange = 15;
+    public static int TakeDamageRange = 15;
 
-	public static int LifeWitherSplash = 0;
+	public static int TakeDamageSplash = 0;
 
-	public static int LifeWitherDamage = 2;
+	public static int TakeDamageDamage = 3;
 
     /// <summary>
     /// Offensive info
     /// </summary>
-	public static bool LifeWitherOffensive = true;
+	public static bool TakeDamageOffensive = true;
 
 	/// <summary>
 	/// Ability Description
 	/// </summary>
-	public static string LifeWitherDescription = "Drains health from the enemy";
+	public static string TakeDamageDescription = "System calls Enemy.TakeDamage()";
 
    
 
 	/// <summary>
-	/// Life Wither
+	/// TakeDamage
 	/// </summary>
 	/// <param name="myChar"></param>
 	/// <param name="map"></param>
-	public static void LifeWither(Character myChar, GridHandler map)
+	public static void TakeDamage(Character myChar, GridHandler map)
 	{
 
 		//create a list of the possible moves, and the nodes they affect
@@ -52,17 +52,16 @@ public static partial class Abilities
 		
 		//IMPORTANT
 		//push this so that the UI can access your stuff <3 -Sean
-		UIInformationHandler.InformationStack.Push(new UIInformation(myChar, map, choices, 0, LifeWitherEffect));
+		UIInformationHandler.InformationStack.Push(new UIInformation(myChar, map, choices, 1, TakeDamageEffect));
 	}
 	
-	public static void LifeWitherEffect(Character myChar, GridHandler map, int affectedFaction, List<Node> affectedNodes)
+	public static void TakeDamageEffect(Character myChar, GridHandler map, int affectedFaction, List<Node> affectedNodes)
 	{
 		for (int i = 0; i < affectedNodes.Count; ++i)
 		{
 			if (affectedNodes[i].myCharacter != null && affectedFaction != myChar.Faction)
 			{
-				affectedNodes[i].myCharacter.DamageCharacter(LifeWitherDamage,DamageType.Cold);
-				myChar.HealCharacter(2);
+				affectedNodes[i].myCharacter.DamageCharacter(TakeDamageDamage,DamageType.Electric);
 			}
 		}
         UIInformationHandler.InformationStack.Clear();

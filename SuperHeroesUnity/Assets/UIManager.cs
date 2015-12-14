@@ -286,14 +286,14 @@ public class UIManager : MonoBehaviour {
         
         selectedCharacter = newSelection;
         CharName.text = selectedCharacter.Name;
-        CharHealth.text = selectedCharacter.Health + " / " + selectedCharacter.MaxHealth;
-        CharMove.text = selectedCharacter.Speed + " " + selectedCharacter.Movement;
+        CharHealth.text = "Health: "+selectedCharacter.Health + " / " + selectedCharacter.MaxHealth;
+        CharMove.text = "Speed: "+selectedCharacter.Speed + " spaces per turn. Moves via " + selectedCharacter.Movement;
         string traits = "";
         foreach(string trait in selectedCharacter.TraitNames)
         {
             traits += trait + " ";
         }
-        CharTraits.text = traits;
+        CharTraits.text = "Trait: "+traits;
         GameObject CharPanel = GameObject.Find("CharacterInfoPanel");
         Debug.Log(CharPanel);
 		Portrait.sprite = Resources.Load<Sprite>("CharacterSprites/" + selectedCharacter.Name);
@@ -329,8 +329,9 @@ public class UIManager : MonoBehaviour {
             string name = ability.Method.Name;
             abilityText.Add(name);
             int abilityRange = (int)Abilities.GetAbilityInfo(ability.Method.Name, AbilityInfo.Range);
+			int abilitySplash = (int)Abilities.GetAbilityInfo(ability.Method.Name, AbilityInfo.Splash);
             string abilityDescription = Abilities.GetAbilityInfo(ability.Method.Name, AbilityInfo.Description) as string;
-            abilityText.Add("Range: " + abilityRange + "\n" + abilityDescription);
+			abilityText.Add("Range: " + abilityRange + "\n" + "Splash: " + abilitySplash + "\n" + abilityDescription);
             for(int i = 0; i < abilityPanel.transform.childCount; i++)
             {
                 abilityPanel.transform.GetChild(i).gameObject.GetComponent<Text>().text = abilityText[i];

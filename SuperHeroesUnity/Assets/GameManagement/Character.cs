@@ -20,7 +20,8 @@ public enum DamageType
     Physical,
     Fire,
     Cold,
-    Electric
+    Electric,
+	Poison
 }
 
 /// <summary>

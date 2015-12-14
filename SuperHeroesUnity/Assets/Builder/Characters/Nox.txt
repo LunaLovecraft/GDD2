@@ -1,9 +1,9 @@
 Nox
 25
-4
+3
 ground
 Abilities
-AxeThrow
-Stomp
+PoisonSpray
+CreepingPoison
 Traits
-Giant
+ToxicTouch

@@ -6,10 +6,12 @@ public class GameManager : MonoBehaviour {
 
     public GridHandler map;
 
-    private Character myChar;
-    private Character myChar2;
-	private Character myChar3;
-	private Character myChar4;
+    private Character PaulBunyan;
+    private Character Wink;
+	private Character Technomancer;
+	private Character GreyDeath;
+	private Character Swarm;
+	private Character Nox;
 
     private List<Faction> factions = new List<Faction>();
     public List<Faction> Factions { get { return factions; } }
@@ -39,36 +41,47 @@ public class GameManager : MonoBehaviour {
         map.map[4, 5].height = TerrainHeight.Empty;
         map.map[4, 6].height = TerrainHeight.Empty;
 
-        myChar = new Character(map, "PaulBunyan");
-		//myChar2 = new Character (map, "Wink");
-		//myChar3 = new Character (map, "Nox");
-        myChar4 = new Character(map, "GreyDeath");
+        PaulBunyan = new Character(map, "PaulBunyan");
+		Wink = new Character (map, "Wink");
+		Technomancer = new Character (map, "Technomancer");
 
-        if (myChar.Create(3, 0, 0, Characters) == CHAR_INIT.CHAR_AT_LOC_ERROR)
+		Nox = new Character (map, "Nox");
+		GreyDeath = new Character(map, "GreyDeath");
+		Swarm = new Character(map, "Swarm");
+
+        if (PaulBunyan.Create(3, 0, 0, Characters) == CHAR_INIT.CHAR_AT_LOC_ERROR)
         {
 
         }
-        //if (myChar2.Create(4, 0, 0, Characters) == CHAR_INIT.CHAR_AT_LOC_ERROR)
+        //if (PaulBunyan2.Create(4, 0, 0, Characters) == CHAR_INIT.CHAR_AT_LOC_ERROR)
         //{
 
        // }
-		//myChar3.Create (3, 8, 1, Characters);
-		myChar4.Create (4, 8, 1, Characters);
+		Wink.Create (4, 0, 0, Characters);
+		Technomancer.Create (5, 0, 0, Characters);
+
+		GreyDeath.Create (3, 8, 1, Characters);
+		Nox.Create (4, 8, 1, Characters);
+		Swarm.Create (5, 8, 1, Characters);
         List<Character> heroes = new List<Character>();
         List<Character> villains = new List<Character>();
 
-        heroes.Add(myChar);
-		//heroes.Add (myChar2);
-        //villains.Add(myChar3);
-		villains.Add(myChar4);
+        heroes.Add(PaulBunyan);
+		heroes.Add (Wink);
+		heroes.Add (Technomancer);
+
+        villains.Add(GreyDeath);
+		villains.Add(Nox);
+		villains.Add (Swarm);
+
 
         factions.Add(new Faction(heroes));
         factions.Add(new Faction(villains));
-        possibleSpots = myChar.MyLocation.FindPossibleMoves(0, 4, null, null);
-        path = myChar.MyLocation.FindPathTo(map.map[5, 6], map, MovementType.Ground);
+        possibleSpots = PaulBunyan.MyLocation.FindPossibleMoves(0, 4, null, null);
+        path = PaulBunyan.MyLocation.FindPathTo(map.map[5, 6], map, MovementType.Ground);
 
-        Debug.Log(myChar.Name);
-        Debug.Log(myChar.Health);
+        Debug.Log(PaulBunyan.Name);
+        Debug.Log(PaulBunyan.Health);
         
         
         gameObject.GetComponent<UIManager>().InitMap();

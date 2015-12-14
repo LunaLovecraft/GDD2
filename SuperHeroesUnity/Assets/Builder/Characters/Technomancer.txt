@@ -1,0 +1,9 @@
+Technomancer
+26
+2
+flying
+Abilities
+Heal
+TakeDamage
+Traits
+Lucky
