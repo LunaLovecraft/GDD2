@@ -145,14 +145,26 @@ public class UIManager : MonoBehaviour {
     public void TurnEnd()
     {
         currentState = UIState.Waiting;
-        foreach(GameObject btn in HomeUI)
+
+        if (gm.Factions[0].Units.Count == 0)
         {
-            if(btn.GetComponent<Button>() != null)
-            {
-                btn.GetComponent<Button>().interactable = false;
-            }
+            Toast.SendToast("Villains Win!!!", EndGame);
         }
-        Toast.SendToast("Turn Start", TurnStart);
+        else if (gm.Factions[1].Units.Count == 0)
+        {
+            Toast.SendToast("Heroes Win!!!", EndGame);
+        }
+        else
+        {
+            foreach (GameObject btn in HomeUI)
+            {
+                if (btn.GetComponent<Button>() != null)
+                {
+                    btn.GetComponent<Button>().interactable = false;
+                }
+            }
+            Toast.SendToast("Turn Start", TurnStart);
+        }
     }
 
     public void TurnStart()
@@ -162,6 +174,10 @@ public class UIManager : MonoBehaviour {
         
     }
 
+    public void EndGame()
+    {
+        Application.LoadLevel("EndGame");
+    }
 
     public void ShowDamage(object sender, EventArgs e)
     {
