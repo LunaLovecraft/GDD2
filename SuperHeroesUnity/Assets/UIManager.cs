@@ -439,6 +439,7 @@ public class UIManager : MonoBehaviour {
                     UIUpdate();
                     History.Clear();
 
+                    // Finds the next character if one exists.
                     Character nextChar = null;
                     for (int i = 0; i < gm.Factions[TurnManager.currentFactionTurn].Units.Count; ++i)
                     {
@@ -448,11 +449,13 @@ public class UIManager : MonoBehaviour {
                             break;
                         }
                     }
+
+                    // Ends turn if there are no new characters
                     if (nextChar == null)
                     {
                         TurnEnd();
                     }
-                    else
+                    else    // Selects the next character if one exists.
                     {
                         SelectCharacter(nextChar);
                     }

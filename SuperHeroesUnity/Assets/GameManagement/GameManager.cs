@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 
@@ -92,6 +93,8 @@ public class GameManager : MonoBehaviour {
         {
             character.OnDamaged += new EventHandler(gameObject.GetComponent<UIManager>().ShowDamage);
             character.OnHealed += new EventHandler(gameObject.GetComponent<UIManager>().ShowHeal);
+
+            character.OnKilled += new EventHandler(RemoveCharacter);
         }
 
         Debug.Log("Map in start: " + map);
@@ -102,4 +105,29 @@ public class GameManager : MonoBehaviour {
 	void Update () {
         TurnManager.Update();
 	}
+    
+    /// <summary>
+    /// Removes the character
+    /// </summary>
+    void RemoveCharacter(object sender, EventArgs e)
+    {
+        CharEventArgs data = (CharEventArgs)e;
+        Character myChar = data.myChar;
+
+        factions[myChar.Faction].Units.Remove(myChar);
+
+        Characters.Remove(myChar);
+
+        CharacterSpriteScript[] characterSprites=  FindObjectsOfType<CharacterSpriteScript>();
+
+        foreach(CharacterSpriteScript characterSprite in characterSprites)
+        {
+            if (characterSprite.X == myChar.MyLocation.X && characterSprite.Y == myChar.MyLocation.Y)
+            {
+                Debug.Log(characterSprite);
+
+                characterSprite.transform.rotation = Quaternion.Euler(0, 0, 90);
+            }
+        }
+    }
 }
