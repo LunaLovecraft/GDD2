@@ -47,7 +47,7 @@ public static partial class CharacterInfoList{
     /// </summary>
     public static void LoadCharacters()
     {
-        System.IO.DirectoryInfo myDirectory = new System.IO.DirectoryInfo("../SuperHeroesUnity/Assets/Builder/Characters");
+        System.IO.DirectoryInfo myDirectory = new System.IO.DirectoryInfo("Assets/Builder/Characters");
         System.IO.FileInfo[] myFiles = myDirectory.GetFiles();
         for (int i = 0; i < myFiles.Length; ++i)
         {
