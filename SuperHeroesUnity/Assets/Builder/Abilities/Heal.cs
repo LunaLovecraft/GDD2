@@ -51,14 +51,14 @@ public static partial class Abilities
 			}
 		}
 
-		UIInformationHandler.InformationStack.Push(new UIInformation(myChar, map, choices, 1, HealEffect));
+        UIInformationHandler.InformationStack.Push(new UIInformation(myChar, map, choices, myChar.Faction, HealEffect));
 	}
 	
 	public static void HealEffect(Character myChar, GridHandler map, int affectedFaction, List<Node> affectedNodes)
 	{
 		for (int i = 0; i < affectedNodes.Count; ++i)
 		{
-			if (affectedNodes[i].myCharacter != null && affectedFaction != myChar.Faction)
+            if (affectedNodes[i].myCharacter != null && affectedFaction == affectedNodes[i].myCharacter.Faction)
 			{
 				affectedNodes[i].myCharacter.HealCharacter(HealDamage);
 			}

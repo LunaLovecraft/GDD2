@@ -49,14 +49,14 @@ public static partial class Abilities{
 		}
 
 		//push this so that the UI can access your stuff
-		UIInformationHandler.InformationStack.Push(new UIInformation(myChar, map, choices, myChar.Faction, AxeThrowEffect));
+		UIInformationHandler.InformationStack.Push(new UIInformation(myChar, map, choices, 1, AxeThrowEffect));
 	}
 	
 	public static void AxeThrowEffect(Character myChar, GridHandler map, int affectedFaction, List<Node> affectedNodes)
 	{
 		for (int i = 0; i < affectedNodes.Count; ++i)
 		{
-			if (affectedNodes[i].myCharacter != null && affectedFaction == myChar.Faction)
+            if (affectedNodes[i].myCharacter != null && affectedFaction == affectedNodes[i].myCharacter.Faction)
 			{
 				myChar.DamageOtherCharacter(affectedNodes[i].myCharacter, AxeThrowDamage, DamageType.Physical);
 			}

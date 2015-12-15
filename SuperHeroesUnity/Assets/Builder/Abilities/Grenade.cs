@@ -48,14 +48,14 @@ public static partial class Abilities{
 		}
 
 		//push this so that the UI can access your stuff
-		UIInformationHandler.InformationStack.Push(new UIInformation(myChar, map, choices, myChar.Faction, GrenadeEffect));
+		UIInformationHandler.InformationStack.Push(new UIInformation(myChar, map, choices, 1, GrenadeEffect));
 	}
 	
 	public static void GrenadeEffect(Character myChar, GridHandler map, int affectedFaction, List<Node> affectedNodes)
 	{
 		for (int i = 0; i < affectedNodes.Count; ++i)
 		{
-			if (affectedNodes[i].myCharacter != null && affectedFaction != myChar.Faction)
+            if (affectedNodes[i].myCharacter != null && affectedFaction == affectedNodes[i].myCharacter.Faction)
 			{
 				myChar.DamageOtherCharacter(affectedNodes[i].myCharacter, GrenadeDamage, DamageType.Fire);
 			}

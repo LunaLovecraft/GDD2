@@ -49,14 +49,14 @@ public static partial class Abilities
 		
 		//Push so that the UI can access
 
-		UIInformationHandler.InformationStack.Push(new UIInformation(myChar, map, choices, 1, CreepingPoisonEffect));
+        UIInformationHandler.InformationStack.Push(new UIInformation(myChar, map, choices, 0, CreepingPoisonEffect));
 	}
 	
 	public static void CreepingPoisonEffect(Character myChar, GridHandler map, int affectedFaction, List<Node> affectedNodes)
 	{
 		for (int i = 0; i < affectedNodes.Count; ++i)
 		{
-			if (affectedNodes[i].myCharacter != null && affectedFaction != myChar.Faction)
+            if (affectedNodes[i].myCharacter != null && affectedFaction == affectedNodes[i].myCharacter.Faction)
 			{
 				myChar.DamageOtherCharacter(affectedNodes[i].myCharacter, CreepingPoisonDamage, DamageType.Poison);
 			}

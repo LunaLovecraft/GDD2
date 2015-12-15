@@ -48,7 +48,7 @@ public static partial class Abilities
         for (int i = 0; i < affectedNodes.Count; ++i)
         {
             Debug.Log("Attacking with Example at " + affectedNodes[i].X + ", " + affectedNodes[i].Y);
-            if (affectedNodes[i].myCharacter != null && affectedFaction != myChar.Faction)
+            if (affectedNodes[i].myCharacter != null && affectedFaction == affectedNodes[i].myCharacter.Faction)
             {
                 affectedNodes[i].myCharacter.DamageCharacter(10, DamageType.Fire);
             }
